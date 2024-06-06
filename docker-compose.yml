@@ -11,5 +11,14 @@ services:
     volumes:
       - ./:/app
     restart: always
-    
+
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+        - "1883:1883"
+        - "9001:9001"
+    volumes:
+        - ./mosquitto.conf:/mosquitto/config/mosquitto.conf    
+    restart: always
+
     
