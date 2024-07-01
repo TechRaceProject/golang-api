@@ -25,8 +25,8 @@ services:
     networks:
       - goland-network
 
-  mysql:
-    container_name: mysql
+  db:
+    container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: golandDb
@@ -46,7 +46,7 @@ services:
   adminer:
     container_name: adminer
     depends_on:
-      - mysql
+      - db
     image: adminer
     ports:
       - 8080:8080
