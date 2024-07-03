@@ -13,14 +13,14 @@ import (
 func main() {
 	fmt.Println("Starting server on port 8080...")
 
-	// Initialize the database connection
 	database, err := services.InitSqlConnection()
+
 	if err != nil {
 		log.Fatal("An error occurred with the database connection: ", err)
 	}
 
-	// Get a reference to the underlying database connection
 	connection, err := database.DB()
+
 	if err != nil {
 		log.Fatal("An error occurred with the database connection: ", err)
 	}
