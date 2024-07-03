@@ -102,7 +102,7 @@ func Login(c *gin.Context) {
 }
 
 func Welcome(c *gin.Context) {
-	claims, err := services.GetClaimsFromToken(c)
+	claims, err := GetClaimsFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
