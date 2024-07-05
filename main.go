@@ -2,46 +2,34 @@ package main
 
 import (
 	"api/src/routes"
-	"encoding/json"
 	"fmt"
-	"log"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type SensorData struct {
-    Light int    `json:"light"`
-    Sonar int    `json:"sonar"`
-    Track string `json:"track"`
+	Light int
+	Sonar int
+	Track string
 }
 
 func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
-    fmt.Println("Received message:")
-		fmt.Println(string(msg.Payload()))
-		fmt.Println(msg.Topic())
-
-    var data SensorData
-    err := json.Unmarshal(msg.Payload(), &data)
-    if err != nil {
-        log.Printf("Error unmarshalling JSON: %v", err)
-        return
-    }
-
-    fmt.Printf("Light: %d, Sonar: %d, Track: %s\n", data.Light, data.Sonar, data.Track)
+	fmt.Println("Received message:")
+	fmt.Println(string(msg.Payload()))
+	fmt.Println(msg.Topic())
 }
 
-var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
-    fmt.Println("Connected")
+func connectHandler(client mqtt.Client) {
+	fmt.Println("Connected")
 }
 
-var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
-    fmt.Printf("Connect lost: %v", err)
+func connectLostHandler(client mqtt.Client, err error) {
+	fmt.Printf("Connect lost: %v", err)
 }
 
 func main() {
 	// fmt.Println("Starting server on port 8080...")
 	fmt.Println("Starting here")
-
 
 	// database, err := services.InitSqlConnection()
 
@@ -63,15 +51,10 @@ func main() {
 	// }
 
 	opts := mqtt.NewClientOptions()
-	
+
 	opts.AddBroker("tcp://mosquitto:1883")
-	// opts.SetClientID("go_mqtt_client")
-	// opts.SetUsername("YOUR_USERNAME") // si nécessaire
-	// opts.SetPassword("YOUR_PASSWORD") // si nécessaire
 	opts.OnConnect = connectHandler
 	opts.OnConnectionLost = connectLostHandler
-
-	// opts.AddBroker("")
 
 	opts.SetDefaultPublishHandler(messagePubHandler)
 
@@ -85,7 +68,7 @@ func main() {
 	}
 
 	subscribe(client)
-		
+
 	router := routes.SetupRouter()
 
 	router.Run(":8000")
@@ -95,8 +78,8 @@ func main() {
 }
 
 func subscribe(client mqtt.Client) {
-    topic := "esp32/#"
-    token := client.Subscribe(topic, 1, messagePubHandler)
-    token.Wait()
-    fmt.Printf("Subscribed to topic: %s\n", topic)
+	topic := "esp32/#"
+	token := client.Subscribe(topic, 1, messagePubHandler)
+	token.Wait()
+	fmt.Printf("Subscribed to topic: %s\n", topic)
 }
