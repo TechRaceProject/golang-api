@@ -22,7 +22,7 @@ func main() {
 	}
 	defer connection.Close()
 
-	err = database.AutoMigrate(&models.User{})
+	err = database.AutoMigrate(&models.User{}, &models.SensorData{})
 	if err != nil {
 		log.Fatal("Error performing database migrations: ", err)
 	}

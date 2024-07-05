@@ -6,17 +6,17 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
+func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	fmt.Println("Received message:")
 	fmt.Println(string(msg.Payload()))
 	fmt.Println(msg.Topic())
 }
 
-var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
+func connectHandler(client mqtt.Client) {
 	fmt.Println("Connected")
 }
 
-var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
+func connectLostHandler(client mqtt.Client, err error) {
 	fmt.Printf("Connect lost: %v", err)
 }
 
