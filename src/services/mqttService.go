@@ -1,15 +1,43 @@
 package services
 
 import (
+	"api/src/models"
 	"fmt"
+	"strconv"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	fmt.Println("Received message:")
-	fmt.Println(string(msg.Payload()))
+	payload := string(msg.Payload())
+	fmt.Println(payload)
 	fmt.Println(msg.Topic())
+
+	value, err := strconv.ParseFloat(payload, 64)
+	if err != nil {
+		fmt.Println("Error converting payload to float:", err)
+		return
+	}
+
+	var sensorData models.SensorData
+
+	switch msg.Topic() {
+	case "esp32/track":
+		sensorData.Track = value
+	case "esp32/sonar":
+		sensorData.Sonar = value
+	case "esp32/light":
+		sensorData.Light = value
+	default:
+		fmt.Println("Invalid topic")
+		return
+	}
+
+	result := GetConnection().Create(&sensorData)
+	if result.Error != nil {
+		fmt.Println("Error inserting data into database:", result.Error)
+	}
 }
 
 func connectHandler(client mqtt.Client) {
