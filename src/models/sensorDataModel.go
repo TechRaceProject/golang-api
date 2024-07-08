@@ -3,9 +3,9 @@ package models
 import "time"
 
 type SensorData struct {
-	ID    uint `gorm:"primaryKey"`
-	Light int
-	Sonar int
-	Track int
+	ID        uint `gorm:"primaryKey"`
+	Light     float64
+	Sonar     float64
+	Track     float64
 	CreatedAt time.Time
 }
