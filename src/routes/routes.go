@@ -19,5 +19,7 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/welcome", controllers.Welcome)
 	}
 
+	VehicleRoutes(router)
+
 	return router
 }
