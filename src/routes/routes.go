@@ -1,36 +1,13 @@
 package routes
 
 import (
-	"api/src/controllers"
-	"api/src/middleware"
+	"api/src/routes/protected"
+	"api/src/routes/public"
 	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
-
-func SetupRouter(router *gin.Engine) *gin.Engine {
-	router = SetupCors(router)
-
-	router.POST("/signup", controllers.Signup)
-	router.POST("/login", controllers.Login)
-
-	router.GET("/hello", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello World!",
-		})
-	})
-
-	protected := router.Group("/protected")
-	protected.Use(middleware.AuthMiddleware())
-	{
-		protected.GET("/welcome", controllers.Welcome)
-	}
-
-	VehicleRoutes(router)
-
-	return router
-}
 
 func SetupCors(router *gin.Engine) *gin.Engine {
 	allowedOrigins := []string{
@@ -46,6 +23,18 @@ func SetupCors(router *gin.Engine) *gin.Engine {
 	}
 
 	router.Use(cors.New(corsConfig))
+
+	return router
+}
+
+func SetupRouter(router *gin.Engine) *gin.Engine {
+	router = SetupCors(router)
+
+	apiGroup := router.Group("/api")
+
+	public.SetupPublicRoutes(apiGroup)
+
+	protected.SetupProtectedRoutes(apiGroup)
 
 	return router
 }
