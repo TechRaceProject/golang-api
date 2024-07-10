@@ -26,6 +26,7 @@ type Claims struct {
 type UserInfo struct {
 	ID        uint      `json:"id"`
 	Email     string    `json:"email"`
+	Username  string    `json:"username"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -90,6 +91,7 @@ func Login(c *gin.Context) {
 	userInfo := UserInfo{
 		ID:        user.ID,
 		Email:     user.Email,
+		Username:  user.Username,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
