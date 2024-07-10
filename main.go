@@ -56,6 +56,16 @@ func closeDatabaseConnection(database *gorm.DB) {
 	fmt.Println("Database migrations completed.")
 }
 
+func performMigrations(database *gorm.DB) {
+	err := database.AutoMigrate(&models.User{}, &models.SensorData{})
+
+	if err != nil {
+		log.Fatal("Error performing database migrations: ", err)
+	}
+
+	fmt.Println("Database migrations completed.")
+}
+
 func initMQTT() {
 	fmt.Println("Starting mqtt connection...")
 
