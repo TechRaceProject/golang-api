@@ -12,5 +12,6 @@ type RegisterUserValidator struct {
 
 func (u *RegisterUserValidator) Validate() error {
 	validate := validator.New()
+
 	return validate.Struct(u)
 }
