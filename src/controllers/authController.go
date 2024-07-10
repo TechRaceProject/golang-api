@@ -3,6 +3,7 @@ package controllers
 import (
 	"api/src/models"
 	"api/src/services"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -13,7 +14,13 @@ import (
 
 var jwtKey = []byte("my_secret_key")
 
-type Credentials struct {
+type RegisterCredentials struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginCredentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -32,21 +39,24 @@ type UserInfo struct {
 }
 
 func Signup(c *gin.Context) {
-	var creds Credentials
+	var creds RegisterCredentials
+
 	if err := c.BindJSON(&creds); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), bcrypt.DefaultCost)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
 
-	user := models.User{Email: creds.Email, Password: string(hashedPassword)}
+	user := models.User{Email: creds.Email, Password: string(hashedPassword), Username: creds.Username}
 
 	result := services.GetConnection().Create(&user)
+
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
@@ -56,13 +66,15 @@ func Signup(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var creds Credentials
+	var creds LoginCredentials
+
 	if err := c.BindJSON(&creds); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
 	var user models.User
+
 	if err := services.GetConnection().Where("email = ?", creds.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
@@ -74,6 +86,7 @@ func Login(c *gin.Context) {
 	}
 
 	expirationTime := time.Now().Add(3 * time.Hour)
+
 	claims := &Claims{
 		Email: creds.Email,
 		StandardClaims: jwt.StandardClaims{
@@ -82,11 +95,15 @@ func Login(c *gin.Context) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	tokenString, err := token.SignedString(jwtKey)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
+
+	fmt.Println("success signed string")
 
 	userInfo := UserInfo{
 		ID:        user.ID,
