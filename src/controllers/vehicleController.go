@@ -3,6 +3,7 @@ package controllers
 import (
 	"api/src/models"
 	"api/src/services"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -36,7 +37,6 @@ func vehicleToAttributes(vehicle models.Vehicle) gin.H {
 	}
 }
 
-
 func GetVehicle(c *gin.Context) {
 	id := c.Param("id")
 	var vehicle models.Vehicle
@@ -50,6 +50,7 @@ func GetVehicle(c *gin.Context) {
 }
 
 func GetVehicles(c *gin.Context) {
+	fmt.Println("GetVehicles")
 	var vehicles []models.Vehicle
 	result := services.GetConnection().Find(&vehicles)
 	if result.Error != nil {
