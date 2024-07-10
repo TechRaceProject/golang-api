@@ -19,7 +19,6 @@ func (u *User) Update(updateUser validators.UpdateUserValidator) {
 	u.Username = updateUser.Username
 	u.Email = updateUser.Email
 
-	// Si un nouveau mot de passe est fourni, mettez à jour le mot de passe
 	if updateUser.Password != "" {
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(updateUser.Password), bcrypt.DefaultCost)
 		u.EncryptedPassword = string(hashedPassword)
@@ -34,7 +33,6 @@ func (u *User) Create(CreateUser validators.RegisterUserValidator) {
 	u.Username = CreateUser.Username
 	u.Email = CreateUser.Email
 
-	// If a new password is provided, update the password
 	if CreateUser.Password != "" {
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(CreateUser.Password), bcrypt.DefaultCost)
 		u.EncryptedPassword = string(hashedPassword)

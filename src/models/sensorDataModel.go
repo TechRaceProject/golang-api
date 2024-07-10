@@ -4,7 +4,6 @@ import (
 	validators "api/src/validators/sensorData"
 )
 
-// SensorData model
 type SensorData struct {
 	ID    uint `gorm:"primaryKey"`
 	Light float64
