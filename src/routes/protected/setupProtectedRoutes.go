@@ -29,7 +29,7 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 	// USER ROUTES
 	{
 		userGroup.GET("/:userId", user_controller.UserHandler)
-		userGroup.PUT("/:userId", user_controller.UpdateUserHandler)
+		userGroup.PATCH("/:userId", user_controller.UpdateUserHandler)
 		userGroup.GET("/", user_controller.GetAllUserHandler)
 		userGroup.DELETE("/:userId", user_controller.DeleteUserHandler)
 	}*/
