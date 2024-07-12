@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -57,4 +58,8 @@ func GetTestRouter() *gin.Engine {
 	}
 
 	return router
+}
+
+func HashString(str string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(str), bcrypt.DefaultCost)
 }
