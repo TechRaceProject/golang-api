@@ -1,4 +1,4 @@
-package auth_test
+package login
 
 import (
 	"api/src/models"
@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCannotSignupIfPasswordIsNotProvided(t *testing.T) {
+func TestCannotLoginIfInvalidPasswordIsProvided(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	databaseConnection := tests.GetTestDBConnection()
@@ -25,16 +25,28 @@ func TestCannotSignupIfPasswordIsNotProvided(t *testing.T) {
 
 	databaseConnection.AutoMigrate(&models.User{})
 
-	user := map[string]string{
-		"email": "test@test.com",
-	}
-	body, _ := json.Marshal(user)
+	hashedPassword, _ := tests.HashString("password")
 
-	request, _ := http.NewRequest(http.MethodPost, "/api/signup", bytes.NewBuffer(body))
+	user := models.User{
+		Email:    "test@example.com",
+		Password: string(hashedPassword),
+		Username: "username",
+	}
+
+	databaseConnection.Create(&user)
+
+	body, _ := json.Marshal(map[string]string{
+		"email":    "test@example.com",
+		"password": "wrong_password",
+	})
+
+	request, _ := http.NewRequest(http.MethodPost, "/api/login", bytes.NewBuffer(body))
 	request.Header.Set("Content-Type", "application/json")
 
 	requestRecorder := httptest.NewRecorder()
 	router.ServeHTTP(requestRecorder, request)
 
 	assert.Equal(t, http.StatusUnprocessableEntity, requestRecorder.Code)
+
+	databaseConnection.Unscoped().Delete(&user)
 }

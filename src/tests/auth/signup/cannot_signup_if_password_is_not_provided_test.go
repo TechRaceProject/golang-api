@@ -1,4 +1,4 @@
-package auth_test
+package signup
 
 import (
 	"api/src/models"
@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCannotSignupIfEmailIsNotProvided(t *testing.T) {
+func TestCannotSignupIfPasswordIsNotProvided(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	databaseConnection := tests.GetTestDBConnection()
@@ -26,7 +26,7 @@ func TestCannotSignupIfEmailIsNotProvided(t *testing.T) {
 	databaseConnection.AutoMigrate(&models.User{})
 
 	user := map[string]string{
-		"password": "password",
+		"email": "test@test.com",
 	}
 	body, _ := json.Marshal(user)
 
