@@ -3,6 +3,12 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"encoding/base64"
+	"errors"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
+	"strings"
 
 	"api/src/models"
 	"api/src/services"
@@ -55,7 +61,50 @@ func UpdateUserHandler(c *gin.Context) {
 
 	updateUser.Update(userValidator)
 
+	// Check if profile pic is included in request
+	if userValidator.ProfilePic != "" {
+		// Validate and save profile pic
+		profilePic, err := parseAndValidateImage(userValidator.ProfilePic)
+		if err != nil {
+			fmt.Println("Error validating profile picture:", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		existingUser.ProfilePic = profilePic
+	}
+
 	db.Save(updateUser)
 
 	c.JSON(http.StatusOK, gin.H{"user": updateUser})
+}
+
+func parseAndValidateImage(encodedImage string) ([]byte, error) {
+	parts := strings.SplitN(encodedImage, ",", 2)
+	if len(parts) != 2 {
+		return nil, errors.New("invalid base64 image format")
+	}
+
+	decoded, err := base64.StdEncoding.DecodeString(parts[1])
+	if err != nil {
+		return nil, err
+	}
+
+	img, _, err := image.Decode(bytes.NewReader(decoded))
+	if err != nil {
+		return nil, err
+	}
+
+	// Check image format and size
+	if len(decoded) > 1*1024*1024 { // 1MB limit
+		return nil, errors.New("image size exceeds 1MB")
+	}
+
+	switch img.(type) {
+	case *image.JPEG:
+		return decoded, nil
+	case *image.PNG:
+		return decoded, nil
+	default:
+		return nil, errors.New("unsupported image format")
+	}
 }
