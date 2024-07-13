@@ -62,3 +62,7 @@ func GetConnection() *gorm.DB {
 
 	return database
 }
+
+func SetConnection(db *gorm.DB) {
+	database = db
+}

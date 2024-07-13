@@ -3,7 +3,6 @@ package controllers
 import (
 	"api/src/models"
 	"api/src/services"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -46,7 +45,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), bcrypt.DefaultCost)
+	hashedPassword, err := services.HashPassword(creds.Password)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
@@ -102,8 +101,6 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
-
-	fmt.Println("success signed string")
 
 	userInfo := UserInfo{
 		ID:        user.ID,
