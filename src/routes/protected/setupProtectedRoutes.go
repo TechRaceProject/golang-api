@@ -3,7 +3,8 @@ package protected
 import (
 	controllers "api/src/controllers"
 	race_controller "api/src/controllers/race"
-	user_controller "api/src/controllers/user"
+
+	//user_controller "api/src/controllers/user"
 	"api/src/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -24,14 +25,14 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 
 	}
 
-	userGroup := routerGroup.Group("/user")
+	/*userGroup := routerGroup.Group("/user")
 	// USER ROUTES
 	{
 		userGroup.GET("/:userId", user_controller.UserHandler)
 		userGroup.PUT("/:userId", user_controller.UpdateUserHandler)
 		userGroup.GET("/", user_controller.GetAllUserHandler)
 		userGroup.DELETE("/:userId", user_controller.DeleteUserHandler)
-	}
+	}*/
 
 	raceGroup := routerGroup.Group("/race")
 
