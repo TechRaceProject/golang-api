@@ -14,18 +14,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCannotLoginIfInvalidPasswordIsProvided(t *testing.T) {
+func Test_cannot_login_if_invalid_password_is_provided(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	databaseConnection := tests.GetTestDBConnection()
-
-	services.SetConnection(databaseConnection)
 
 	router := tests.GetTestRouter()
 
 	databaseConnection.AutoMigrate(&models.User{})
 
-	hashedPassword, _ := tests.HashString("password")
+	hashedPassword, _ := services.HashPassword("password")
 
 	user := models.User{
 		Email:    "test@example.com",

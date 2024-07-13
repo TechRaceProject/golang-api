@@ -6,31 +6,9 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-var db *gorm.DB
 var router *gin.Engine
-
-func setupTestDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
-
-	if err != nil {
-		panic("failed to connect to the test database")
-	}
-
-	return db
-}
-
-func GetTestDBConnection() *gorm.DB {
-	if db == nil {
-		db = setupTestDB()
-	}
-
-	return db
-}
 
 func setupTestRouter(router *gin.Engine) *gin.Engine {
 	corsConfig := cors.Config{
@@ -58,8 +36,4 @@ func GetTestRouter() *gin.Engine {
 	}
 
 	return router
-}
-
-func HashString(str string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(str), bcrypt.DefaultCost)
 }

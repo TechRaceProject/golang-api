@@ -23,3 +23,15 @@ Log into the GO container
 ```bash
   docker exec -it  nom-du-container bash
 ```
+
+## Testing
+
+Run api tests
+```bash
+  docker-compose exec api go test ./src/tests/... -v
+```
+
+Run every api tests from a single test repository
+```bash
+  docker-compose exec api go test ./src/tests/auth/login -v
+```

@@ -2,7 +2,6 @@ package signup
 
 import (
 	"api/src/models"
-	"api/src/services"
 	"api/src/tests"
 	"bytes"
 	"encoding/json"
@@ -14,12 +13,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCannotSignupIfEmailIsNotProvided(t *testing.T) {
+func Test_cannot_signup_if_email_is_not_provided_test(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	databaseConnection := tests.GetTestDBConnection()
-
-	services.SetConnection(databaseConnection)
 
 	router := tests.GetTestRouter()
 

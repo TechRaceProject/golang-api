@@ -2,7 +2,6 @@ package login
 
 import (
 	"api/src/models"
-	"api/src/services"
 	"api/src/tests"
 	"bytes"
 	"net/http"
@@ -13,12 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCannotLoginIfUserDoesntExist(t *testing.T) {
+func Test_cannot_login_if_user_doesnt_exist_test(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	databaseConnection := tests.GetTestDBConnection()
-
-	services.SetConnection(databaseConnection)
 
 	router := tests.GetTestRouter()
 

@@ -1,14 +1,16 @@
-package tests
+package database
 
 import (
 	"api/src/models"
+	"api/src/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSetupTestDB(t *testing.T) {
-	db := GetTestDBConnection()
+func Test_testing_database_is_working_as_expected(t *testing.T) {
+	// On setup une base de donnée sqlite en mémoire dans le cadre du test
+	db := tests.GetTestDBConnection()
 
 	// Vérifier que la connexion à la base de données est établie
 	assert.NotNil(t, db, "La base de données ne doit pas être nil")
@@ -21,7 +23,7 @@ func TestSetupTestDB(t *testing.T) {
 
 	assert.NoError(t, err, "Erreur lors de la connexion à la base de données")
 
-	// Vérifier qu'une migration s'effectue correctement
+	// Ici on vérifie que la table users a bien été créée en migrant le modèle User sur la base de données sqlite
 	var count int64
 
 	db.AutoMigrate(&models.User{})
