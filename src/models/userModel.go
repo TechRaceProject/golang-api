@@ -2,8 +2,6 @@ package models
 
 import (
 	validators "api/src/validators/user"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -19,24 +17,12 @@ func (u *User) Update(updateUser validators.UpdateUserValidator) {
 	u.Email = updateUser.Email
 
 	if updateUser.Password != "" {
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(updateUser.Password), bcrypt.DefaultCost)
-
-		u.Password = string(hashedPassword)
+		u.Password = updateUser.Password
 	}
-}
-
-func (u *User) HashPassword() ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 }
 
 func (u *User) Create(CreateUser validators.RegisterUserValidator) {
 	u.Username = CreateUser.Username
-
 	u.Email = CreateUser.Email
-
-	if CreateUser.Password != "" {
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(CreateUser.Password), bcrypt.DefaultCost)
-
-		u.Password = string(hashedPassword)
-	}
+	u.Password = CreateUser.Password
 }
