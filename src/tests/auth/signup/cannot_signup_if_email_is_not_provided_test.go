@@ -3,10 +3,8 @@ package signup
 import (
 	"api/src/models"
 	"api/src/tests"
-	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +16,6 @@ func Test_cannot_signup_if_email_is_not_provided_test(t *testing.T) {
 
 	databaseConnection := tests.GetTestDBConnection()
 
-	router := tests.GetTestRouter()
-
 	databaseConnection.AutoMigrate(&models.User{})
 
 	user := map[string]string{
@@ -27,11 +23,7 @@ func Test_cannot_signup_if_email_is_not_provided_test(t *testing.T) {
 	}
 	body, _ := json.Marshal(user)
 
-	request, _ := http.NewRequest(http.MethodPost, "/api/signup", bytes.NewBuffer(body))
-	request.Header.Set("Content-Type", "application/json")
-
-	requestRecorder := httptest.NewRecorder()
-	router.ServeHTTP(requestRecorder, request)
+	requestRecorder, _ := tests.PerformUnAuthenticatedRequest(http.MethodPost, "/api/signup", body)
 
 	assert.Equal(t, http.StatusUnprocessableEntity, requestRecorder.Code)
 }

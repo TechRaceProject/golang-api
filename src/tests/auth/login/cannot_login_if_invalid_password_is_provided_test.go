@@ -4,10 +4,8 @@ import (
 	"api/src/models"
 	"api/src/services"
 	"api/src/tests"
-	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +16,6 @@ func Test_cannot_login_if_invalid_password_is_provided(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	databaseConnection := tests.GetTestDBConnection()
-
-	router := tests.GetTestRouter()
 
 	databaseConnection.AutoMigrate(&models.User{})
 
@@ -38,11 +34,7 @@ func Test_cannot_login_if_invalid_password_is_provided(t *testing.T) {
 		"password": "wrong_password",
 	})
 
-	request, _ := http.NewRequest(http.MethodPost, "/api/login", bytes.NewBuffer(body))
-	request.Header.Set("Content-Type", "application/json")
-
-	requestRecorder := httptest.NewRecorder()
-	router.ServeHTTP(requestRecorder, request)
+	requestRecorder, _ := tests.PerformUnAuthenticatedRequest(http.MethodPost, "/api/login", body)
 
 	assert.Equal(t, http.StatusUnprocessableEntity, requestRecorder.Code)
 

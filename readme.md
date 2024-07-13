@@ -35,3 +35,8 @@ Run every api tests from a single test repository
 ```bash
   docker-compose exec api go test ./src/tests/auth/login -v
 ```
+
+Run a single test file 
+```bash
+  docker-compose exec api go test ./src/tests/auth/login -v -run Test_can_login_if_valid_email_and_password_are_provided
+```

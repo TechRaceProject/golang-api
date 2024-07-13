@@ -3,10 +3,8 @@ package signup
 import (
 	"api/src/models"
 	"api/src/tests"
-	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -18,9 +16,6 @@ func Test_can_signup_if_email_and_password_are_provided_test(t *testing.T) {
 
 	databaseConnection := tests.GetTestDBConnection()
 
-	// Créer le serveur de test
-	router := tests.GetTestRouter()
-
 	// Créer une requête de test et la table associée
 	databaseConnection.AutoMigrate(&models.User{})
 
@@ -30,12 +25,8 @@ func Test_can_signup_if_email_and_password_are_provided_test(t *testing.T) {
 	}
 	body, _ := json.Marshal(user)
 
-	request, _ := http.NewRequest(http.MethodPost, "/api/signup", bytes.NewBuffer(body))
-	request.Header.Set("Content-Type", "application/json")
-
-	// Enregistrer la réponse
-	requestRecorder := httptest.NewRecorder()
-	router.ServeHTTP(requestRecorder, request)
+	// On effecture une requête unauthenticated
+	requestRecorder, _ := tests.PerformUnAuthenticatedRequest(http.MethodPost, "/api/signup", body)
 
 	// Vérifier le statut de la réponse
 	assert.Equal(t, http.StatusCreated, requestRecorder.Code)
