@@ -13,7 +13,8 @@ func CreateRaceHandler(c *gin.Context) {
 	var race models.Race
 
 	if err := c.ShouldBindJSON(&race); err != nil {
-		services.SetUnprocessableEntity(c, err.Error())
+		services.SetJsonBindingErrorResponse(c, err)
+
 		return
 	}
 
@@ -30,7 +31,8 @@ func CreateRaceHandler(c *gin.Context) {
 	}
 
 	if err := raceValidator.Validate(); err != nil {
-		services.SetUnprocessableEntity(c, err.Error())
+		services.SetValidationErrorResponse(c, err)
+
 		return
 	}
 
