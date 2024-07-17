@@ -3,6 +3,7 @@ package protected
 import (
 	controllers "api/src/controllers"
 	race_controller "api/src/controllers/race"
+	sensor_controller "api/src/controllers/sensorData"
 
 	//user_controller "api/src/controllers/user"
 	"api/src/middleware"
@@ -43,6 +44,17 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 		raceGroup.POST("/", race_controller.CreateRaceHandler)
 		raceGroup.PATCH("/:raceId", race_controller.UpdateRaceHandler)
 		raceGroup.DELETE("/:raceId", race_controller.DeleteRaceHandler)
+	}
+
+	SensorDataGroupe := routerGroup.Group("/sensorData")
+
+	// SENSOR DATA ROUTES
+	{
+		SensorDataGroupe.GET("/", sensor_controller.GetAllSensorDataHandler)
+		SensorDataGroupe.GET("/:sensorDataId", sensor_controller.GetSingleSensorDataHandler)
+		SensorDataGroupe.POST("/", sensor_controller.CreateSensorDataHandler)
+		SensorDataGroupe.PATCH("/:sensorDataId", sensor_controller.UpdateSensorDataHandler)
+		SensorDataGroupe.DELETE("/:sensorDataId", sensor_controller.DeleteSensorDataHandler)
 	}
 
 }
