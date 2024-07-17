@@ -34,12 +34,12 @@ func CreateSensorDataHandler(c *gin.Context) {
 
 	if err := db.Create(&sensorData).Error; err != nil {
 		// Log the detailed error message for debugging purposes
-		fmt.Printf("Error creating Race: %v\n", err)
+		fmt.Printf("Error creating Sensor Data: %v\n", err)
 
 		// Set an appropriate error response
-		services.SetInternalServerError(c, "Failed to create Race")
+		services.SetInternalServerError(c, "Failed to create Sensor Data")
 		return
 	}
 
-	services.SetCreated(c, "Race created successfully", sensorData)
+	services.SetCreated(c, "Sensor Data created successfully", sensorData)
 }

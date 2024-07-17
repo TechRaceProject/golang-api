@@ -14,8 +14,8 @@ func GetSingleSensorDataHandler(c *gin.Context) {
 
 	sensorDataId := c.Param("sensorDataId")
 
-	if err := db.Preload("Vehicle").First(&sensorData, sensorDataId).Error; err != nil {
-		if err.Error() == "record not found" {
+	if err := db.First(&sensorData, sensorDataId).Error; err != nil {
+		if err.Error() == " Sensor Data not found" {
 			services.SetNotFound(c, "Sensor Data not found")
 		} else {
 			services.SetInternalServerError(c, "Failed to retrieve Sensor Data")
