@@ -32,7 +32,7 @@ func CreateTestUser(db *gorm.DB) *models.User {
 
 	hashedPassword, _ := services.HashPassword(password)
 	testUser = &models.User{
-		Username: username,
+		Username: &username,
 		Email:    email,
 		Password: string(hashedPassword),
 	}

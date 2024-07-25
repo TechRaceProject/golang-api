@@ -23,7 +23,7 @@ func Test_get_races_index(t *testing.T) {
 
 	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.Race{})
 
-	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, "/api/race/", nil)
+	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, "/api/races/", nil)
 
 	assert.Equal(t, http.StatusOK, requestRecorder.Code)
 

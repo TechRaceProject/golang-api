@@ -21,10 +21,12 @@ func Test_cannot_login_if_invalid_password_is_provided(t *testing.T) {
 
 	hashedPassword, _ := services.HashPassword("password")
 
+	username := "username"
+
 	user := models.User{
 		Email:    "test@example.com",
 		Password: string(hashedPassword),
-		Username: "username",
+		Username: &username,
 	}
 
 	databaseConnection.Create(&user)

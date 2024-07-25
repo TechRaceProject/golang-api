@@ -37,7 +37,7 @@ func Test_get_single_race_successfully(t *testing.T) {
 	}
 	databaseConnection.Create(&race)
 
-	requestURL := fmt.Sprintf("/api/race/%d", race.ID)
+	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, requestURL, nil)
 
 	assert.Equal(t, http.StatusOK, requestRecorder.Code)
@@ -60,7 +60,7 @@ func Test_get_single_race_not_found(t *testing.T) {
 
 	invalidRaceID := 999999
 
-	requestURL := fmt.Sprintf("/api/race/%d", invalidRaceID)
+	requestURL := fmt.Sprintf("/api/races/%d", invalidRaceID)
 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, requestURL, nil)
 
 	assert.Equal(t, http.StatusNotFound, requestRecorder.Code)

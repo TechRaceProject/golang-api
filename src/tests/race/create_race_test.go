@@ -35,7 +35,7 @@ func Test_create_race_successfully(t *testing.T) {
 		"vehicle_id":         vehicle.ID,
 	})
 
-	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPost, "/api/race/", body)
+	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPost, "/api/races/", body)
 
 	assert.Equal(t, http.StatusCreated, requestRecorder.Code)
 }
