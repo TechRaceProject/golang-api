@@ -3,20 +3,22 @@ package controllers
 import (
 	"api/src/models"
 	"api/src/services"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 var jwtKey = []byte("my_secret_key")
 
 type RegisterCredentials struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username *string `json:"username"`
+	Email    string  `json:"email"`
+	Password string  `json:"password"`
 }
 
 type LoginCredentials struct {
@@ -41,14 +43,14 @@ func Signup(c *gin.Context) {
 	var creds RegisterCredentials
 
 	if err := c.BindJSON(&creds); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		services.SetJsonBindingErrorResponse(c, err)
 		return
 	}
 
 	hashedPassword, err := services.HashPassword(creds.Password)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		services.SetInternalServerError(c, "Internal server error while hashing password")
 		return
 	}
 
@@ -57,30 +59,37 @@ func Signup(c *gin.Context) {
 	result := services.GetConnection().Create(&user)
 
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		services.SetInternalServerError(c, result.Error.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "User created"})
+	services.SetCreated(c, "User created", user)
 }
 
 func Login(c *gin.Context) {
 	var creds LoginCredentials
 
 	if err := c.BindJSON(&creds); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		services.SetJsonBindingErrorResponse(c, err)
 		return
 	}
 
 	var user models.User
 
-	if err := services.GetConnection().Where("email = ?", creds.Email).First(&user).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+	query := services.GetConnection().Where("email = ?", creds.Email).Find(&user)
+
+	if query.Error != nil {
+		if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+			services.SetNotFound(c, "Invalid credentials")
+			return
+		}
+
+		services.SetInternalServerError(c, "Internal server error")
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		services.SetUnauthorized(c, "Invalid credentials")
 		return
 	}
 
@@ -98,14 +107,14 @@ func Login(c *gin.Context) {
 	tokenString, err := token.SignedString(jwtKey)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		services.SetInternalServerError(c, "Internal server error")
 		return
 	}
 
 	userInfo := UserInfo{
 		ID:        user.ID,
 		Email:     user.Email,
-		Username:  user.Username,
+		Username:  *user.Username,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
@@ -121,7 +130,7 @@ func Welcome(c *gin.Context) {
 	claims, err := GetClaimsFromToken(c)
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		services.SetUnauthorized(c, "Unauthorized")
 		return
 	}
 

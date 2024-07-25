@@ -34,7 +34,7 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 		userGroup.DELETE("/:userId", user_controller.DeleteUserHandler)
 	}*/
 
-	raceGroup := routerGroup.Group("/race")
+	raceGroup := routerGroup.Group("/races")
 
 	// RACE ROUTES
 	{

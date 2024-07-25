@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-
 	"api/src/models"
 	"api/src/services"
 
@@ -16,20 +14,20 @@ func DeleteRaceHandler(c *gin.Context) {
 	db := services.GetConnection()
 
 	var existingRace models.Race
-	if err := db.First(&existingRace, raceID).Error; err != nil {
-		fmt.Println("Error retrieving race from the database:", err)
+
+	query := db.Where("id", raceID).Find(&existingRace)
+
+	if query.RowsAffected == 0 {
 		services.SetNotFound(c, "Race not found")
 		return
 	}
 
-	fmt.Println("Existing race to delete:", existingRace)
+	query = db.Where("id", raceID).Delete(&existingRace)
 
-	if err := db.Delete(&existingRace).Error; err != nil {
-		fmt.Println("Error deleting race from the database:", err)
-		services.SetInternalServerError(c, "Failed to delete race")
+	if query.Error != nil {
+		services.SetInternalServerError(c, "Internal server error")
 		return
 	}
 
-	fmt.Println("Race deleted successfully:", existingRace)
 	services.SetNoContent(c)
 }

@@ -21,10 +21,12 @@ func Test_can_login_if_valid_email_and_password_are_provided(t *testing.T) {
 
 	hashedPassword, _ := services.HashPassword("password")
 
+	username := "username"
+
 	user := models.User{
 		Email:    "test@example.com",
 		Password: string(hashedPassword),
-		Username: "username",
+		Username: &username,
 	}
 
 	databaseConnection.Create(&user)

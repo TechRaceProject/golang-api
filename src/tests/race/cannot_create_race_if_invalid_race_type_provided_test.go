@@ -4,7 +4,6 @@ import (
 	"api/src/models"
 	"api/src/tests"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -37,10 +36,9 @@ func Test_cannot_create_race_if_invalid_race_type_provided(t *testing.T) {
 		"vehicle_id":         vehicle.ID,
 	})
 
-	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPost, "/api/race/", body)
+	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPost, "/api/races/", body)
 
 	responseBody := requestRecorder.Body.String()
-	fmt.Println("Response Body:", responseBody)
 
 	assert.Equal(t, http.StatusUnprocessableEntity, requestRecorder.Code)
 
