@@ -14,12 +14,10 @@ func GetSingleRaceHandler(c *gin.Context) {
 
 	raceId := c.Param("raceId")
 
-	if err := db.Preload("Vehicle").First(&race, raceId).Error; err != nil {
-		if err.Error() == "record not found" {
-			services.SetNotFound(c, "Race not found")
-		} else {
-			services.SetInternalServerError(c, "Failed to retrieve race")
-		}
+	query := db.Where("id", raceId).Find(&race)
+
+	if query.RowsAffected == 0 {
+		services.SetNotFound(c, "Race not found")
 		return
 	}
 

@@ -36,7 +36,7 @@ func Test_delete_race_successfully(t *testing.T) {
 	}
 	databaseConnection.Create(&race)
 
-	requestURL := fmt.Sprintf("/api/race/%d", race.ID)
+	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodDelete, requestURL, nil)
 
 	assert.Equal(t, http.StatusNoContent, requestRecorder.Code)
@@ -55,7 +55,7 @@ func Test_delete_race_not_found(t *testing.T) {
 	databaseConnection.Create(&vehicle)
 
 	nonExistentRaceID := 999
-	requestURL := fmt.Sprintf("/api/race/%d", nonExistentRaceID)
+	requestURL := fmt.Sprintf("/api/races/%d", nonExistentRaceID)
 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodDelete, requestURL, nil)
 
 	assert.Equal(t, http.StatusNotFound, requestRecorder.Code)

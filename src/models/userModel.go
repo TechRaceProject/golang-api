@@ -5,15 +5,16 @@ import (
 )
 
 type User struct {
-	ID       uint   `gorm:"primaryKey"`
-	Username string `gorm:"unique;not null" json:"username"`
-	Email    string `gorm:"unique;not null" json:"email"`
-	Password string `gorm:"not null" json:"password"`
+	ID       uint    `gorm:"primaryKey"`
+	Username *string `gorm:"unique" json:"username"`
+	Email    string  `gorm:"unique;not null" json:"email"`
+	Password string  `gorm:"not null" json:"password"`
 	Model
 }
 
 func (u *User) Update(updateUser validators.UpdateUserValidator) {
-	u.Username = updateUser.Username
+	u.Username = &updateUser.Username
+
 	u.Email = updateUser.Email
 
 	if updateUser.Password != "" {
@@ -22,7 +23,8 @@ func (u *User) Update(updateUser validators.UpdateUserValidator) {
 }
 
 func (u *User) Create(CreateUser validators.RegisterUserValidator) {
-	u.Username = CreateUser.Username
+	u.Username = &CreateUser.Username
+
 	u.Email = CreateUser.Email
 	u.Password = CreateUser.Password
 }

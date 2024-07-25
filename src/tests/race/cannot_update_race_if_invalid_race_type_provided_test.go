@@ -4,7 +4,6 @@ import (
 	"api/src/models"
 	"api/src/tests"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -51,11 +50,10 @@ func Test_cannot_update_race_if_invalid_race_type_provided(t *testing.T) {
 		"vehicle_id":         vehicle.ID,
 	})
 
-	requestURL := "/api/race/1"
+	requestURL := "/api/races/1"
 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPatch, requestURL, body)
 
 	responseBody := requestRecorder.Body.String()
-	fmt.Println("Response Body:", responseBody)
 
 	assert.Equal(t, http.StatusUnprocessableEntity, requestRecorder.Code)
 

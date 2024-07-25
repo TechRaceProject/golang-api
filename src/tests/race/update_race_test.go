@@ -49,7 +49,7 @@ func Test_update_race_successfully(t *testing.T) {
 		"vehicle_id":         vehicle.ID,
 	})
 
-	requestURL := fmt.Sprintf("/api/race/%d", race.ID)
+	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPatch, requestURL, body)
 
 	assert.Equal(t, http.StatusOK, requestRecorder.Code)

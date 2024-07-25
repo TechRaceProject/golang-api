@@ -17,12 +17,9 @@ func UpdateRaceHandler(c *gin.Context) {
 
 	var existingRace models.Race
 	if err := db.Preload("Vehicle").First(&existingRace, raceID).Error; err != nil {
-		fmt.Println("Error retrieving Race from the database:", err)
 		services.SetNotFound(c, "Race not found")
 		return
 	}
-
-	fmt.Println("Existing Race:", existingRace)
 
 	var raceValidator validators.CreateRaceValidator
 

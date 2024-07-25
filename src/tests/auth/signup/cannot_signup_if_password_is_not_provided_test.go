@@ -19,8 +19,9 @@ func Test_cannot_signup_if_password_is_not_provided_test(t *testing.T) {
 	databaseConnection.AutoMigrate(&models.User{})
 
 	user := map[string]string{
-		"email": "test@test.com",
+		"email": "test123@test.com",
 	}
+
 	body, _ := json.Marshal(user)
 
 	requestRecorder, _ := tests.PerformUnAuthenticatedRequest(http.MethodPost, "/api/signup", body)
