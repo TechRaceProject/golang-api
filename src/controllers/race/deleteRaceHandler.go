@@ -10,13 +10,13 @@ import (
 )
 
 func DeleteRaceHandler(c *gin.Context) {
-	raceId := c.Param("raceId")
+	raceID := c.Param("raceId")
 
 	// Access the database connection
 	db := services.GetConnection()
 
 	var existingRace models.Race
-	if err := db.First(&existingRace, raceId).Error; err != nil {
+	if err := db.First(&existingRace, raceID).Error; err != nil {
 		fmt.Println("Error retrieving race from the database:", err)
 		services.SetNotFound(c, "Race not found")
 		return
@@ -30,5 +30,6 @@ func DeleteRaceHandler(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("Race deleted successfully:", existingRace)
 	services.SetNoContent(c)
 }
