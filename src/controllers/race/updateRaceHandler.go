@@ -52,5 +52,5 @@ func UpdateRaceHandler(c *gin.Context) {
 		return
 	}
 
-	services.SetCreated(c, "Race updated successfully", existingRace)
+	services.SetOK(c, "Race updated successfully", existingRace)
 }
