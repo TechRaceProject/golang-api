@@ -21,22 +21,43 @@ func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	}
 
 	var sensorData models.SensorData
+	var raceData models.RaceTestData
+	isSensorData := false
+	isRaceData := false
 
 	switch msg.Topic() {
-	case "esp32/track":
+	case "esp32/car/track":
 		sensorData.Track = value
-	case "esp32/sonar":
+		isSensorData = true
+	case "esp32/car/sonar":
 		sensorData.Sonar = value
-	case "esp32/light":
+		isSensorData = true
+	case "esp32/car/light":
 		sensorData.Light = value
+		isSensorData = true
+	case "esp32/race/distance":
+		raceData.Distance = value
+		isRaceData = true
+	case "esp32/race/timer":
+		raceData.Timer = value
+		isRaceData = true
 	default:
 		fmt.Println("Invalid topic")
 		return
 	}
 
-	result := GetConnection().Create(&sensorData)
-	if result.Error != nil {
-		fmt.Println("Error inserting data into database:", result.Error)
+	if isSensorData {
+		result := GetConnection().Create(&sensorData)
+		if result.Error != nil {
+			fmt.Println("Error inserting sensor data into database:", result.Error)
+		}
+	}
+
+	if isRaceData {
+		result := GetConnection().Create(&raceData)
+		if result.Error != nil {
+			fmt.Println("Error inserting race data into database:", result.Error)
+		}
 	}
 }
 
