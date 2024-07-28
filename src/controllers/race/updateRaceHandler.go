@@ -24,16 +24,11 @@ func UpdateRaceHandler(c *gin.Context) {
 
 	fmt.Println("Existing Race:", existingRace)
 
-	raceValidator := validators.CreateRaceValidator{
-		Duration:          existingRace.Duration,
-		ElapsedTime:       existingRace.ElapsedTime,
-		Laps:              existingRace.Laps,
-		RaceType:          existingRace.RaceType,
-		AverageSpeed:      existingRace.AverageSpeed,
-		TotalFaults:       existingRace.TotalFaults,
-		EffectiveDuration: existingRace.EffectiveDuration,
-		UserID:            existingRace.UserID,
-		VehicleID:         existingRace.VehicleID,
+	var raceValidator validators.CreateRaceValidator
+
+	if err := c.ShouldBindJSON(&raceValidator); err != nil {
+		services.SetJsonBindingErrorResponse(c, err)
+		return
 	}
 
 	if err := raceValidator.Validate(); err != nil {
@@ -41,9 +36,21 @@ func UpdateRaceHandler(c *gin.Context) {
 		return
 	}
 
-	existingRace.Update(raceValidator)
+	existingRace.Duration = raceValidator.Duration
+	existingRace.ElapsedTime = raceValidator.ElapsedTime
+	existingRace.Laps = raceValidator.Laps
+	existingRace.RaceType = raceValidator.RaceType
+	existingRace.AverageSpeed = raceValidator.AverageSpeed
+	existingRace.TotalFaults = raceValidator.TotalFaults
+	existingRace.EffectiveDuration = raceValidator.EffectiveDuration
+	existingRace.UserID = raceValidator.UserID
+	existingRace.VehicleID = raceValidator.VehicleID
 
-	db.Save(&existingRace)
+	if err := db.Save(&existingRace).Error; err != nil {
+		fmt.Printf("Error updating Race: %v\n", err)
+		services.SetInternalServerError(c, "Failed to update Race")
+		return
+	}
 
 	services.SetCreated(c, "Race updated successfully", existingRace)
 }
