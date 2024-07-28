@@ -10,39 +10,34 @@ import (
 )
 
 func CreateRaceHandler(c *gin.Context) {
-	var race models.Race
+	var createRaceValidator validators.CreateRaceValidator
 
-	if err := c.ShouldBindJSON(&race); err != nil {
+	if err := c.ShouldBindJSON(&createRaceValidator); err != nil {
 		services.SetJsonBindingErrorResponse(c, err)
-
 		return
 	}
 
-	raceValidator := validators.CreateRaceValidator{
-		Duration:          race.Duration,
-		ElapsedTime:       race.ElapsedTime,
-		Laps:              race.Laps,
-		RaceType:          race.RaceType,
-		AverageSpeed:      race.AverageSpeed,
-		TotalFaults:       race.TotalFaults,
-		EffectiveDuration: race.EffectiveDuration,
-		UserID:            race.UserID,
-		VehicleID:         race.VehicleID,
-	}
-
-	if err := raceValidator.Validate(); err != nil {
+	if err := createRaceValidator.Validate(); err != nil {
 		services.SetValidationErrorResponse(c, err)
-
 		return
+	}
+
+	race := models.Race{
+		Duration:          createRaceValidator.Duration,
+		ElapsedTime:       createRaceValidator.ElapsedTime,
+		Laps:              createRaceValidator.Laps,
+		RaceType:          createRaceValidator.RaceType,
+		AverageSpeed:      createRaceValidator.AverageSpeed,
+		TotalFaults:       createRaceValidator.TotalFaults,
+		EffectiveDuration: createRaceValidator.EffectiveDuration,
+		UserID:            createRaceValidator.UserID,
+		VehicleID:         createRaceValidator.VehicleID,
 	}
 
 	db := services.GetConnection()
 
 	if err := db.Create(&race).Error; err != nil {
-		// Log the detailed error message for debugging purposes
 		fmt.Printf("Error creating Race: %v\n", err)
-
-		// Set an appropriate error response
 		services.SetInternalServerError(c, "Failed to create Race")
 		return
 	}
