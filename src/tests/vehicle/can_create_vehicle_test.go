@@ -2,12 +2,10 @@ package tests
 
 import (
 	"api/src/models"
-	"bytes"
+	"api/src/tests"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
-	"api/src/tests"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -38,15 +36,14 @@ func TestCanCreateVehicle(t *testing.T) {
 	}
 
 	body, _ := json.Marshal(vehicle)
-	recorder := httptest.NewRecorder()
-	router := tests.GetTestRouter()
-	request, _ := http.NewRequest(http.MethodPost, "/api/vehicles", bytes.NewBuffer(body))
-	request.Header.Set("Content-Type", "application/json")
-	router.ServeHTTP(recorder, request)
 
-	assert.Equal(t, http.StatusCreated, recorder.Code)
+	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPost, "/api/vehicles", body)
+
+	assert.Equal(t, http.StatusCreated, requestRecorder.Code)
 
 	var response map[string]interface{}
-	json.Unmarshal(recorder.Body.Bytes(), &response)
+
+	json.Unmarshal(requestRecorder.Body.Bytes(), &response)
+
 	assert.Equal(t, "New Vehicle", response["data"].(map[string]interface{})["attributes"].(map[string]interface{})["vehicle_name"])
 }

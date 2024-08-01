@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func setupTestVehicle(db *gorm.DB) *models.Vehicle {
+func SetupTestVehicle(db *gorm.DB) *models.Vehicle {
 	vehicle := &models.Vehicle{
 		Name:          "Test Vehicle",
 		BatteryLife:   100.0,

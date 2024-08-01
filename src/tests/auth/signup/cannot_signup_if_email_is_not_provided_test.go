@@ -21,6 +21,7 @@ func Test_cannot_signup_if_email_is_not_provided_test(t *testing.T) {
 	user := map[string]string{
 		"password": "password",
 	}
+
 	body, _ := json.Marshal(user)
 
 	requestRecorder, _ := tests.PerformUnAuthenticatedRequest(http.MethodPost, "/api/signup", body)

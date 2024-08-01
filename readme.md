@@ -25,6 +25,10 @@ Log into the GO container
 ```
 
 ## Testing
+Run api login test without docker
+```bash
+  go test ./src/tests/auth/login -v
+```
 
 Run api tests
 ```bash
