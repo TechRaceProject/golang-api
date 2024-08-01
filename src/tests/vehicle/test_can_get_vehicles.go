@@ -2,11 +2,11 @@ package tests
 
 import (
 	"api/src/models"
+	"api/src/tests"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"api/src/tests"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +17,7 @@ func TestCanGetVehicles(t *testing.T) {
 
 	db := tests.GetTestDBConnection()
 	db.AutoMigrate(&models.Vehicle{})
-	tests.setupTestVehicle(db)
+	tests.SetupTestVehicle(db)
 
 	recorder := httptest.NewRecorder()
 	router := tests.GetTestRouter()
