@@ -5,7 +5,6 @@ import (
 	"api/src/tests"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"strconv"
 	"testing"
 
@@ -20,10 +19,7 @@ func TestCanGetVehicle(t *testing.T) {
 	db.AutoMigrate(&models.Vehicle{})
 	vehicle := tests.SetupTestVehicle(db)
 
-	recorder := httptest.NewRecorder()
-	router := tests.GetTestRouter()
-	request, _ := http.NewRequest(http.MethodGet, "/api/vehicles/"+strconv.Itoa(int(vehicle.ID)), nil)
-	router.ServeHTTP(recorder, request)
+	recorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, "/api/vehicles/"+strconv.Itoa(int(vehicle.ID)), nil)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
 

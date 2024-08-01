@@ -5,7 +5,6 @@ import (
 	"api/src/tests"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -19,10 +18,7 @@ func TestCanGetVehicles(t *testing.T) {
 	db.AutoMigrate(&models.Vehicle{})
 	tests.SetupTestVehicle(db)
 
-	recorder := httptest.NewRecorder()
-	router := tests.GetTestRouter()
-	request, _ := http.NewRequest(http.MethodGet, "/api/vehicles", nil)
-	router.ServeHTTP(recorder, request)
+	recorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, "/api/vehicles/", nil)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
 
