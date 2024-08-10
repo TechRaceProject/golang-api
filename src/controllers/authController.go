@@ -48,13 +48,27 @@ func Signup(c *gin.Context) {
 	}
 
 	if (creds.Email == "") || (creds.Password == "") {
-		services.SetUnprocessableEntity(c, "Email and password are required")
+		services.SetUnprocessableEntity(c, "Email address and password are required")
 
 		return
 	}
 
 	if !services.EmailValidator(creds.Email) {
-		services.SetUnprocessableEntity(c, "User email is invalid")
+		services.SetUnprocessableEntity(c, "User email address is invalid")
+
+		return
+	}
+
+	connection := services.GetConnection()
+
+	if connection.Where("email = ?", creds.Email).First(&models.User{}).RowsAffected > 0 {
+		services.SetUnprocessableEntity(c, "A user with this email address already exists")
+
+		return
+	}
+
+	if creds.Username != nil && connection.Where("username = ?", *creds.Username).First(&models.User{}).RowsAffected > 0 {
+		services.SetUnprocessableEntity(c, "A user with this username already exists")
 
 		return
 	}
@@ -68,7 +82,7 @@ func Signup(c *gin.Context) {
 
 	user := models.User{Email: creds.Email, Password: string(hashedPassword), Username: creds.Username}
 
-	result := services.GetConnection().Create(&user)
+	result := connection.Create(&user)
 
 	if result.Error != nil {
 		services.SetInternalServerError(c, result.Error.Error())
@@ -87,13 +101,13 @@ func Login(c *gin.Context) {
 	}
 
 	if (creds.Email == "") || (creds.Password == "") {
-		services.SetUnprocessableEntity(c, "Email and password are required")
+		services.SetUnprocessableEntity(c, "Email address and password are required")
 
 		return
 	}
 
 	if !services.EmailValidator(creds.Email) {
-		services.SetUnprocessableEntity(c, "User email is invalid")
+		services.SetUnprocessableEntity(c, "User email address is invalid")
 
 		return
 	}
