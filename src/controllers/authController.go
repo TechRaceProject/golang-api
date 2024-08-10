@@ -47,6 +47,18 @@ func Signup(c *gin.Context) {
 		return
 	}
 
+	if (creds.Email == "") || (creds.Password == "") {
+		services.SetUnprocessableEntity(c, "Email and password are required")
+
+		return
+	}
+
+	if !services.EmailValidator(creds.Email) {
+		services.SetUnprocessableEntity(c, "User email is invalid")
+
+		return
+	}
+
 	hashedPassword, err := services.HashPassword(creds.Password)
 
 	if err != nil {
@@ -71,6 +83,18 @@ func Login(c *gin.Context) {
 
 	if err := c.BindJSON(&creds); err != nil {
 		services.SetJsonBindingErrorResponse(c, err)
+		return
+	}
+
+	if (creds.Email == "") || (creds.Password == "") {
+		services.SetUnprocessableEntity(c, "Email and password are required")
+
+		return
+	}
+
+	if !services.EmailValidator(creds.Email) {
+		services.SetUnprocessableEntity(c, "User email is invalid")
+
 		return
 	}
 
