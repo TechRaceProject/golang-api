@@ -77,15 +77,59 @@ func Signup(c *gin.Context) {
 
 	if err != nil {
 		services.SetInternalServerError(c, "Internal server error while hashing password")
+
 		return
 	}
 
-	user := models.User{Email: creds.Email, Password: string(hashedPassword), Username: creds.Username}
+	var user models.User
+	var errorOccuredInTransaction error
 
-	result := connection.Create(&user)
+	connection.Transaction(func(transaction *gorm.DB) error {
 
-	if result.Error != nil {
-		services.SetInternalServerError(c, result.Error.Error())
+		user = models.User{
+			Username: creds.Username,
+			Email:    creds.Email,
+			Password: string(hashedPassword),
+		}
+
+		result := transaction.Create(&user)
+
+		if result.Error != nil {
+			errorOccuredInTransaction = result.Error
+
+			return errorOccuredInTransaction
+		}
+
+		vehicles := []models.Vehicle{}
+
+		transaction.Find(&vehicles)
+
+		if len(vehicles) == 0 {
+
+			errorOccuredInTransaction = errors.New(
+				"cannot register a user because no vehicles are available in the database",
+			)
+
+			return errorOccuredInTransaction
+		}
+
+		for _, vehicle := range vehicles {
+			_, createVehiculeStateError := vehicle.InitVehicleState(&user, transaction)
+
+			if createVehiculeStateError != nil {
+				errorOccuredInTransaction = errors.New(
+					createVehiculeStateError.Error(),
+				)
+
+				return createVehiculeStateError
+			}
+		}
+		return nil
+	})
+
+	if errorOccuredInTransaction != nil {
+		services.SetInternalServerError(c, errorOccuredInTransaction.Error())
+
 		return
 	}
 
@@ -127,7 +171,7 @@ func Login(c *gin.Context) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
-		services.SetUnauthorized(c, "Invalid credentials")
+		services.SetUnprocessableEntity(c, "Invalid credentials")
 		return
 	}
 

@@ -47,17 +47,22 @@ func closeDatabaseConnection(database *gorm.DB) {
 
 	connection.Close()
 
-	err = database.AutoMigrate(&models.User{}, &models.SensorData{}, &models.Vehicle{}, &models.Fool{}, &models.Race{})
-
-	if err != nil {
-		log.Fatal("Error performing database migrations: ", err)
-	}
-
 	fmt.Println("Database migrations completed.")
 }
 
 func performMigrations(database *gorm.DB) {
-	err := database.AutoMigrate(&models.User{}, &models.SensorData{}, &models.Vehicle{}, &models.Fool{}, &models.Race{})
+	err := database.AutoMigrate(
+		&models.User{},
+		&models.SensorData{},
+		&models.Vehicle{},
+		&models.Fool{},
+		&models.Race{},
+		&models.VehicleState{},
+		&models.PrimaryLedColor{},
+		&models.SecondaryLedColor{},
+		&models.BuzzerVariable{},
+		&models.HeadAngle{},
+	)
 
 	if err != nil {
 		log.Fatal("Error performing database migrations: ", err)
