@@ -17,7 +17,11 @@ func Test_can_signup_if_email_and_password_are_provided_test(t *testing.T) {
 	databaseConnection := tests.GetTestDBConnection()
 
 	// Créer une requête de test et la table associée
-	databaseConnection.AutoMigrate(&models.User{})
+	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.VehicleState{})
+
+	databaseConnection.Create(&models.Vehicle{
+		Name: "a vehicule is required to enable any user to signup",
+	})
 
 	user := map[string]string{
 		"email":    "test@example.com",
