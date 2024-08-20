@@ -171,7 +171,7 @@ func Login(c *gin.Context) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
-		services.SetUnauthorized(c, "Invalid credentials")
+		services.SetUnprocessableEntity(c, "Invalid credentials")
 		return
 	}
 
