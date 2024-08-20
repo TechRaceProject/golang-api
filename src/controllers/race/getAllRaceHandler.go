@@ -12,7 +12,7 @@ func GetAllRaceHandler(c *gin.Context) {
 
 	var races []models.Race
 
-	if err := db.Preload("Vehicle").Find(&races).Error; err != nil {
+	if err := db.Find(&races).Error; err != nil {
 		services.SetInternalServerError(c, "Failed to retrieve races")
 		return
 	}

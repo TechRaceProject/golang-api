@@ -3,6 +3,7 @@ package handlers
 import (
 	"api/src/models"
 	"api/src/services"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,16 +16,15 @@ func DeleteRaceHandler(c *gin.Context) {
 
 	var existingRace models.Race
 
-	query := db.Where("id", raceID).Find(&existingRace)
-
-	if query.RowsAffected == 0 {
+	// Recherche de la course par ID
+	if err := db.Where("id = ?", raceID).First(&existingRace).Error; err != nil {
+		fmt.Println(raceID)
 		services.SetNotFound(c, "Race not found")
 		return
 	}
 
-	query = db.Where("id", raceID).Delete(&existingRace)
-
-	if query.Error != nil {
+	// Suppression de la course
+	if err := db.Delete(&existingRace).Error; err != nil {
 		services.SetInternalServerError(c, "Internal server error")
 		return
 	}
