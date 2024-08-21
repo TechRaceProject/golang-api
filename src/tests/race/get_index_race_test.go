@@ -51,6 +51,7 @@ func Test_get_races_index(t *testing.T) {
 		AverageSpeed:       120,
 		OutOfParcours:      0,
 		UserID:             user.ID,
+		RaceType:           "manual",
 	}
 	databaseConnection.Create(&race)
 
