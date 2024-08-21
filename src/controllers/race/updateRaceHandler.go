@@ -36,11 +36,11 @@ func UpdateRaceHandler(c *gin.Context) {
 
 	// Mise à jour uniquement du champ End_time
 	if raceValidator.EndTime != nil && !raceValidator.EndTime.IsZero() {
-		if raceValidator.EndTime.Before(existingRace.Start_time) {
+		if raceValidator.EndTime.Before(existingRace.StartTime) {
 			services.SetUnprocessableEntity(c, "EndTime cannot be before StartTime")
 			return
 		}
-		existingRace.End_time = raceValidator.EndTime
+		existingRace.EndTime = raceValidator.EndTime
 	}
 
 	// Sauvegarde les modifications dans la base de données

@@ -41,12 +41,12 @@ func CreateRaceHandler(c *gin.Context) {
 
 	// Création du modèle Race avec les données validées
 	race := models.Race{
-		Start_time:           createRaceValidator.StartTime,
-		End_time:             createRaceValidator.EndTime,
-		Number_of_collisions: createRaceValidator.NumberOfCollisions,
-		Distance_travelled:   createRaceValidator.DistanceTravelled,
-		Average_speed:        createRaceValidator.AverageSpeed,
-		Out_of_parcours:      createRaceValidator.OutOfParcours,
+		StartTime:           createRaceValidator.StartTime,
+		EndTime:             createRaceValidator.EndTime,
+		NumberOfCollisions: createRaceValidator.NumberOfCollisions,
+		DistanceTravelled:   createRaceValidator.DistanceTravelled,
+		AverageSpeed:        createRaceValidator.AverageSpeed,
+		OutOfParcours:      createRaceValidator.OutOfParcours,
 		VehicleID:          createRaceValidator.VehicleID,
 		UserID:               uint(userId), // Conversion de uint64 à uint
 	}
