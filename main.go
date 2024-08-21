@@ -103,7 +103,7 @@ func initVehicleData(database *gorm.DB) {
 			log.Fatal("Error parsing isAvailable variable to boolean in initVehicleData: ", err)
 		}
 
-		database.Create(&models.Vehicle{
+		database.FirstOrCreate(&models.Vehicle{
 			Name:        name,
 			IpAdress:    ip,
 			IsAvailable: isAvailable,
