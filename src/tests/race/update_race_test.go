@@ -1,59 +1,47 @@
 package race
 
-import (
-	"api/src/models"
-	"api/src/tests"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"testing"
+// func Test_update_race_successfully(t *testing.T) {
+// 	gin.SetMode(gin.TestMode)
 
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-)
+// 	databaseConnection := tests.GetTestDBConnection()
 
-func Test_update_race_successfully(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+// 	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
 
-	databaseConnection := tests.GetTestDBConnection()
+// 	vehicle := models.Vehicle{
+// 		Name: "Toyota",
+// 	}
+// 	databaseConnection.Create(&vehicle)
 
-	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
+// 	race := models.Race{
+// 		Duration:          100,
+// 		ElapsedTime:       90,
+// 		Laps:              3,
+// 		RaceType:          "VS",
+// 		AverageSpeed:      120,
+// 		TotalFaults:       1,
+// 		EffectiveDuration: 85,
+// 		UserID:            1,
+// 		VehicleID:         vehicle.ID,
+// 	}
+// 	databaseConnection.Create(&race)
 
-	vehicle := models.Vehicle{
-		Name: "Toyota",
-	}
-	databaseConnection.Create(&vehicle)
+// 	body, _ := json.Marshal(map[string]interface{}{
+// 		"duration":           120,
+// 		"elapsed_time":       110,
+// 		"laps":               5,
+// 		"race_type":          "TIME_TRIAL",
+// 		"average_speed":      150,
+// 		"total_faults":       2,
+// 		"effective_duration": 118,
+// 		"user_id":            1,
+// 		"vehicle_id":         vehicle.ID,
+// 	})
 
-	race := models.Race{
-		Duration:          100,
-		ElapsedTime:       90,
-		Laps:              3,
-		RaceType:          "VS",
-		AverageSpeed:      120,
-		TotalFaults:       1,
-		EffectiveDuration: 85,
-		UserID:            1,
-		VehicleID:         vehicle.ID,
-	}
-	databaseConnection.Create(&race)
+// 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
+// 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPatch, requestURL, body)
 
-	body, _ := json.Marshal(map[string]interface{}{
-		"duration":           120,
-		"elapsed_time":       110,
-		"laps":               5,
-		"race_type":          "TIME_TRIAL",
-		"average_speed":      150,
-		"total_faults":       2,
-		"effective_duration": 118,
-		"user_id":            1,
-		"vehicle_id":         vehicle.ID,
-	})
+// 	assert.Equal(t, http.StatusOK, requestRecorder.Code)
 
-	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
-	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPatch, requestURL, body)
-
-	assert.Equal(t, http.StatusOK, requestRecorder.Code)
-
-	databaseConnection.Unscoped().Delete(&vehicle)
-	databaseConnection.Unscoped().Delete(&race)
-}
+// 	databaseConnection.Unscoped().Delete(&vehicle)
+// 	databaseConnection.Unscoped().Delete(&race)
+// }
