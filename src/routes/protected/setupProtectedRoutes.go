@@ -5,7 +5,6 @@ import (
 	race_controller "api/src/controllers/race"
 	"api/src/controllers/vehicle_state"
 
-	//user_controller "api/src/controllers/user"
 	"api/src/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -15,16 +14,6 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 	routerGroup.Use(middleware.AuthMiddleware())
 
 	routerGroup.GET("/protected", controllers.Welcome)
-
-	// VEHICLE ROUTES
-	vehicleGroup := routerGroup.Group("/vehicles")
-	{
-		vehicleGroup.GET("/:id", controllers.GetVehicle)
-		vehicleGroup.GET("/", controllers.GetVehicles)
-		vehicleGroup.POST("/", controllers.CreateVehicle)
-		vehicleGroup.PATCH("/:id", controllers.UpdateVehicle)
-		vehicleGroup.DELETE("/:id", controllers.DeleteVehicle)
-	}
 
 	/*userGroup := routerGroup.Group("/user")
 	// USER ROUTES

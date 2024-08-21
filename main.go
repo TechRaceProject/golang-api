@@ -6,8 +6,12 @@ import (
 	"api/src/services"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
 
@@ -19,6 +23,8 @@ func main() {
 	defer closeDatabaseConnection(database)
 
 	performMigrations(database)
+
+	initVehicleData(database)
 
 	initMQTT()
 
@@ -69,6 +75,40 @@ func performMigrations(database *gorm.DB) {
 	}
 
 	fmt.Println("Database migrations completed.")
+}
+
+func initVehicleData(database *gorm.DB) {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Error loading .env file in initVehicleData: ", err)
+	}
+
+	for i := 1; ; i++ {
+		nameKey := fmt.Sprintf("VEHICLE_%d_NAME", i)
+		ipAddressKey := fmt.Sprintf("VEHICLE_%d_IPADDRESS", i)
+		availableKey := fmt.Sprintf("VEHICLE_%d_IS_AVAILABLE", i)
+
+		name := os.Getenv(nameKey)
+		ip := os.Getenv(ipAddressKey)
+		isAvailableStr := os.Getenv(availableKey)
+
+		if name == "" || ip == "" || isAvailableStr == "" {
+			break
+		}
+
+		isAvailable, err := strconv.ParseBool(strings.TrimSpace(isAvailableStr))
+
+		if err != nil {
+			log.Fatal("Error parsing isAvailable variable to boolean in initVehicleData: ", err)
+		}
+
+		database.Create(&models.Vehicle{
+			Name:        name,
+			IpAdress:    ip,
+			IsAvailable: isAvailable,
+		})
+	}
 }
 
 func initMQTT() {
