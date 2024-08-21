@@ -19,8 +19,9 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 	userGroup := routerGroup.Group("/users")
 	// USER ROUTES
 	{
-		userGroup.POST("/:userId/:races", race_controller.CreateRaceHandler)
-		userGroup.GET("/:userId/:races", race_controller.GetAllUsersRaceHandler)
+		userGroup.POST("/:userId/races", race_controller.CreateRaceHandler)
+		userGroup.GET("/:userId/races", race_controller.GetAllUsersRaceHandler)
+
 	}
 
 	// RACE ROUTES
