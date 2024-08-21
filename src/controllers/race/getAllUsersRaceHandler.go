@@ -30,5 +30,5 @@ func GetAllUsersRaceHandler(c *gin.Context) {
 		return
 	}
 
-	services.SetOK(c, "Races retrieved successfully", races)
+	services.SetOK(c, "User races retrieved successfully", races)
 }

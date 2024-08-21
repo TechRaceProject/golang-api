@@ -28,7 +28,6 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 	raceGroup := routerGroup.Group("/races")
 	{
 		raceGroup.GET("/", race_controller.GetAllRaceHandler)
-		raceGroup.GET("/:raceId", race_controller.GetAllUsersRaceHandler)
 		raceGroup.PATCH("/:raceId", race_controller.UpdateRaceHandler)
 		raceGroup.DELETE("/:raceId", race_controller.DeleteRaceHandler)
 	}
