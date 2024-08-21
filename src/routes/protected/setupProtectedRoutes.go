@@ -3,6 +3,7 @@ package protected
 import (
 	controllers "api/src/controllers"
 	race_controller "api/src/controllers/race"
+	"api/src/controllers/vehicle"
 	"api/src/controllers/vehicle_state"
 
 	"api/src/middleware"
@@ -32,6 +33,13 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 		raceGroup.POST("/", race_controller.CreateRaceHandler)
 		raceGroup.PATCH("/:raceId", race_controller.UpdateRaceHandler)
 		raceGroup.DELETE("/:raceId", race_controller.DeleteRaceHandler)
+	}
+
+	// VEHICLE ROUTES
+	vehicleGroup := routerGroup.Group("/vehicles")
+	{
+		vehicleGroup.GET("/", vehicle.IndexVehicleHandler)
+		vehicleGroup.GET("/:id", vehicle.GetVehicleHandler)
 	}
 
 	// VEHICLE STATE ROUTES
