@@ -26,6 +26,8 @@ func main() {
 
 	initVehicleData(database)
 
+	seedDatabase(database)
+
 	initMQTT()
 
 	startWebServer()
@@ -107,6 +109,42 @@ func initVehicleData(database *gorm.DB) {
 			Name:        name,
 			IpAdress:    ip,
 			IsAvailable: isAvailable,
+		})
+	}
+}
+
+func seedDatabase(database *gorm.DB) {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Error loading .env file in seedDatabase: ", err)
+	}
+
+	allowDatabaseSeeding := os.Getenv("ALLOW_DATABASE_SEEDING")
+
+	if allowDatabaseSeeding != "true" {
+		return
+	}
+
+	var usernames = []string{"David", "Goliath", "Pierre"}
+	var emails = []string{"l-david@test.com", "a-goliath@test.com", "q-pierre@test.com"}
+	hashedPassword, _ := services.HashPassword("password")
+
+	for i := 0; i < len(usernames); i++ {
+		database.FirstOrCreate(&models.User{}, models.User{
+			Username: &usernames[i],
+			Email:    emails[i],
+			Password: string(hashedPassword),
+		})
+	}
+
+	vehicle := database.First(&models.Vehicle{})
+
+	if vehicle.RowsAffected == 0 {
+		database.FirstOrCreate(&models.Vehicle{}, models.Vehicle{
+			Name:        "Seed Vehicle",
+			IpAdress:    "0.0.0.0",
+			IsAvailable: false,
 		})
 	}
 }
