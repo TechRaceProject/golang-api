@@ -1,51 +1,65 @@
 package race
 
-// func Test_delete_race_successfully(t *testing.T) {
-// 	gin.SetMode(gin.TestMode)
+import (
+	"api/src/models"
+	"api/src/tests"
+	"fmt"
+	"net/http"
+	"testing"
+	"time"
 
-// 	databaseConnection := tests.GetTestDBConnection()
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+)
 
-// 	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
+func Test_delete_race_successfully(t *testing.T) {
+	gin.SetMode(gin.TestMode)
 
-// 	vehicle := models.Vehicle{
-// 		Name: "Toyota",
-// 	}
-// 	databaseConnection.Create(&vehicle)
+	databaseConnection := tests.GetTestDBConnection()
 
-// 	race := models.Race{
-// 		Duration:          100,
-// 		ElapsedTime:       90,
-// 		Laps:              3,
-// 		RaceType:          "VS",
-// 		AverageSpeed:      120,
-// 		TotalFaults:       1,
-// 		EffectiveDuration: 85,
-// 		UserID:            1,
-// 		VehicleID:         vehicle.ID,
-// 	}
-// 	databaseConnection.Create(&race)
+	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
 
-// 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
-// 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodDelete, requestURL, nil)
+	vehicle := models.Vehicle{
+		Name: "Toyota",
+	}
+	databaseConnection.Create(&vehicle)
 
-// 	assert.Equal(t, http.StatusNoContent, requestRecorder.Code)
-// }
+	startTime := time.Now()
+	endTime := startTime.Add(time.Hour)
 
-// func Test_delete_race_not_found(t *testing.T) {
-// 	gin.SetMode(gin.TestMode)
+	race := models.Race{
+		VehicleID:          vehicle.ID,
+		StartTime:          startTime,
+		EndTime:            &endTime,
+		NumberOfCollisions: 3,
+		DistanceTravelled:  100,
+		AverageSpeed:       120,
+		OutOfParcours:      0,
+		UserID:             1,
+	}
+	databaseConnection.Create(&race)
 
-// 	databaseConnection := tests.GetTestDBConnection()
+	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
+	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodDelete, requestURL, nil)
 
-// 	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
+	assert.Equal(t, http.StatusNoContent, requestRecorder.Code)
+}
 
-// 	vehicle := models.Vehicle{
-// 		Name: "Toyota",
-// 	}
-// 	databaseConnection.Create(&vehicle)
+func Test_delete_race_not_found(t *testing.T) {
+	gin.SetMode(gin.TestMode)
 
-// 	nonExistentRaceID := 999
-// 	requestURL := fmt.Sprintf("/api/races/%d", nonExistentRaceID)
-// 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodDelete, requestURL, nil)
+	databaseConnection := tests.GetTestDBConnection()
 
-// 	assert.Equal(t, http.StatusNotFound, requestRecorder.Code)
-// }
+	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
+
+	vehicle := models.Vehicle{
+		Name: "Toyota",
+	}
+	databaseConnection.Create(&vehicle)
+
+	nonExistentRaceID := 999
+	requestURL := fmt.Sprintf("/api/races/%d", nonExistentRaceID)
+	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodDelete, requestURL, nil)
+
+	assert.Equal(t, http.StatusNotFound, requestRecorder.Code)
+}
