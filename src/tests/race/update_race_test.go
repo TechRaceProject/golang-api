@@ -49,6 +49,7 @@ func Test_update_race_successfully(t *testing.T) {
 		"out_of_parcours":      1,
 		"user_id":              2, // Assume user ID is updated
 		"vehicle_id":           vehicle.ID,
+		"race_type":            "manual",
 	})
 
 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
