@@ -1,47 +1,61 @@
 package race
 
-// func Test_update_race_successfully(t *testing.T) {
-// 	gin.SetMode(gin.TestMode)
+import (
+	"api/src/models"
+	"api/src/tests"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"testing"
+	"time"
 
-// 	databaseConnection := tests.GetTestDBConnection()
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+)
 
-// 	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
+func Test_update_race_successfully(t *testing.T) {
+	gin.SetMode(gin.TestMode)
 
-// 	vehicle := models.Vehicle{
-// 		Name: "Toyota",
-// 	}
-// 	databaseConnection.Create(&vehicle)
+	databaseConnection := tests.GetTestDBConnection()
 
-// 	race := models.Race{
-// 		Duration:          100,
-// 		ElapsedTime:       90,
-// 		Laps:              3,
-// 		RaceType:          "VS",
-// 		AverageSpeed:      120,
-// 		TotalFaults:       1,
-// 		EffectiveDuration: 85,
-// 		UserID:            1,
-// 		VehicleID:         vehicle.ID,
-// 	}
-// 	databaseConnection.Create(&race)
+	databaseConnection.AutoMigrate(&models.Vehicle{}, &models.Race{})
 
-// 	body, _ := json.Marshal(map[string]interface{}{
-// 		"duration":           120,
-// 		"elapsed_time":       110,
-// 		"laps":               5,
-// 		"race_type":          "TIME_TRIAL",
-// 		"average_speed":      150,
-// 		"total_faults":       2,
-// 		"effective_duration": 118,
-// 		"user_id":            1,
-// 		"vehicle_id":         vehicle.ID,
-// 	})
+	vehicle := models.Vehicle{
+		Name: "Toyota",
+	}
+	databaseConnection.Create(&vehicle)
 
-// 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
-// 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPatch, requestURL, body)
+	startTime := time.Now()
+	endTime := startTime.Add(time.Hour)
 
-// 	assert.Equal(t, http.StatusOK, requestRecorder.Code)
+	race := models.Race{
+		VehicleID:          vehicle.ID,
+		StartTime:          startTime,
+		EndTime:            &endTime,
+		NumberOfCollisions: 3,
+		DistanceTravelled:  100,
+		AverageSpeed:       120,
+		OutOfParcours:      0,
+		UserID:             1,
+	}
+	databaseConnection.Create(&race)
 
-// 	databaseConnection.Unscoped().Delete(&vehicle)
-// 	databaseConnection.Unscoped().Delete(&race)
-// }
+	updateBody, _ := json.Marshal(map[string]interface{}{
+		"start_time":           startTime.Add(-time.Minute).Format(time.RFC3339), // Updated start time
+		"end_time":             endTime.Add(time.Minute).Format(time.RFC3339),    // Updated end time
+		"number_of_collisions": 5,
+		"distance_travelled":   150,
+		"average_speed":        130,
+		"out_of_parcours":      1,
+		"user_id":              2, // Assume user ID is updated
+		"vehicle_id":           vehicle.ID,
+	})
+
+	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
+	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodPatch, requestURL, updateBody)
+
+	assert.Equal(t, http.StatusOK, requestRecorder.Code)
+
+	databaseConnection.Unscoped().Delete(&vehicle)
+	databaseConnection.Unscoped().Delete(&race)
+}
