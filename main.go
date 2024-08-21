@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -121,7 +122,6 @@ func seedDatabase(database *gorm.DB) {
 	}
 
 	allowDatabaseSeeding := os.Getenv("ALLOW_DATABASE_SEEDING")
-
 	if allowDatabaseSeeding != "true" {
 		return
 	}
@@ -130,6 +130,7 @@ func seedDatabase(database *gorm.DB) {
 	var emails = []string{"l-david@test.com", "a-goliath@test.com", "q-pierre@test.com"}
 	hashedPassword, _ := services.HashPassword("password")
 
+	// Seed users
 	for i := 0; i < len(usernames); i++ {
 		database.FirstOrCreate(&models.User{}, models.User{
 			Username: &usernames[i],
@@ -138,19 +139,40 @@ func seedDatabase(database *gorm.DB) {
 		})
 	}
 
-	vehicle := database.First(&models.Vehicle{})
+	// Seed a vehicle if not already present
+	var vehicle models.Vehicle
+	database.FirstOrCreate(&vehicle, models.Vehicle{
+		Name:        "Seed Vehicle",
+		IpAdress:    "0.0.0.0",
+		IsAvailable: false,
+	})
 
-	if vehicle.RowsAffected == 0 {
-		database.FirstOrCreate(&models.Vehicle{}, models.Vehicle{
-			Name:        "Seed Vehicle",
-			IpAdress:    "0.0.0.0",
-			IsAvailable: false,
-		})
+	// Fetch all users
+	var users []models.User
+	database.Find(&users)
+
+	// Seed races for each user
+	for _, user := range users {
+		for i := 0; i < 3; i++ {
+			startTime := time.Now().Add(time.Duration(i) * time.Hour)
+			endTime := startTime.Add(1 * time.Hour)
+			race := models.Race{
+				VehicleID:          vehicle.ID,
+				StartTime:          startTime,
+				EndTime:            &endTime,
+				NumberOfCollisions: uint8(i + 1),
+				DistanceTravelled:  100 + (i * 10),
+				AverageSpeed:       120 + (i * 5),
+				OutOfParcours:      uint8(i % 2),
+				UserID:             user.ID,
+			}
+			database.Create(&race)
+		}
 	}
 }
 
 func initMQTT() {
-	fmt.Println("Starting mqtt connection...")
+	fmt.Println("Starting MQTT connection...")
 
 	client := services.InitMQTTClient("tcp://mosquitto:1883")
 
