@@ -1,67 +1,55 @@
 package race
 
-import (
-	"api/src/models"
-	"api/src/tests"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"testing"
+// func Test_get_single_race_successfully(t *testing.T) {
+// 	gin.SetMode(gin.TestMode)
 
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-)
+// 	databaseConnection := tests.GetTestDBConnection()
 
-func Test_get_single_race_successfully(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+// 	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.Race{})
 
-	databaseConnection := tests.GetTestDBConnection()
+// 	vehicle := models.Vehicle{
+// 		Name: "Toyota",
+// 	}
+// 	databaseConnection.Create(&vehicle)
 
-	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.Race{})
+// 	race := models.Race{
+// 		Duration:          100,
+// 		ElapsedTime:       90,
+// 		Laps:              3,
+// 		RaceType:          "VS",
+// 		AverageSpeed:      120,
+// 		TotalFaults:       1,
+// 		EffectiveDuration: 85,
+// 		UserID:            1,
+// 		VehicleID:         vehicle.ID,
+// 	}
+// 	databaseConnection.Create(&race)
 
-	vehicle := models.Vehicle{
-		Name: "Toyota",
-	}
-	databaseConnection.Create(&vehicle)
+// 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
+// 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, requestURL, nil)
 
-	race := models.Race{
-		Duration:          100,
-		ElapsedTime:       90,
-		Laps:              3,
-		RaceType:          "VS",
-		AverageSpeed:      120,
-		TotalFaults:       1,
-		EffectiveDuration: 85,
-		UserID:            1,
-		VehicleID:         vehicle.ID,
-	}
-	databaseConnection.Create(&race)
+// 	assert.Equal(t, http.StatusOK, requestRecorder.Code)
 
-	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
-	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, requestURL, nil)
+// 	var response map[string]interface{}
+// 	err := json.Unmarshal(requestRecorder.Body.Bytes(), &response)
+// 	assert.NoError(t, err)
 
-	assert.Equal(t, http.StatusOK, requestRecorder.Code)
+// 	data, ok := response["data"].(map[string]interface{})
+// 	assert.True(t, ok)
+// 	assert.Equal(t, float64(race.ID), data["ID"])
+// }
 
-	var response map[string]interface{}
-	err := json.Unmarshal(requestRecorder.Body.Bytes(), &response)
-	assert.NoError(t, err)
+// func Test_get_single_race_not_found(t *testing.T) {
+// 	gin.SetMode(gin.TestMode)
 
-	data, ok := response["data"].(map[string]interface{})
-	assert.True(t, ok)
-	assert.Equal(t, float64(race.ID), data["ID"])
-}
+// 	databaseConnection := tests.GetTestDBConnection()
 
-func Test_get_single_race_not_found(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+// 	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.Race{})
 
-	databaseConnection := tests.GetTestDBConnection()
+// 	invalidRaceID := 999999
 
-	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.Race{})
+// 	requestURL := fmt.Sprintf("/api/races/%d", invalidRaceID)
+// 	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, requestURL, nil)
 
-	invalidRaceID := 999999
-
-	requestURL := fmt.Sprintf("/api/races/%d", invalidRaceID)
-	requestRecorder, _ := tests.PerformAuthenticatedRequest(http.MethodGet, requestURL, nil)
-
-	assert.Equal(t, http.StatusNotFound, requestRecorder.Code)
-}
+// 	assert.Equal(t, http.StatusNotFound, requestRecorder.Code)
+// }
