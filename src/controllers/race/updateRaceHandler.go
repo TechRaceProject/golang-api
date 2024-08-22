@@ -43,6 +43,14 @@ func UpdateRaceHandler(c *gin.Context) {
 		existingRace.EndTime = raceValidator.EndTime
 	}
 
+	if raceValidator.Name != "" {
+		existingRace.Name = raceValidator.Name
+	}
+
+	if raceValidator.Status != "" {
+		existingRace.Status = raceValidator.Status
+	}
+
 	// Sauvegarde les modifications dans la base de données
 	if err := db.Save(&existingRace).Error; err != nil {
 		fmt.Printf("Error updating Race: %v\n", err)

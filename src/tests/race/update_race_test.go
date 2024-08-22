@@ -41,16 +41,9 @@ func Test_update_race_successfully(t *testing.T) {
 	databaseConnection.Create(&race)
 
 	updateBody, _ := json.Marshal(map[string]interface{}{
-		"start_time":           startTime.Add(-time.Minute).Format(time.RFC3339), // Updated start time
-		"end_time":             endTime.Add(time.Minute).Format(time.RFC3339),    // Updated end time
-		"number_of_collisions": 5,
-		"distance_travelled":   150,
-		"average_speed":        130,
-		"out_of_parcours":      1,
-		"user_id":              2, // Assume user ID is updated
-		"vehicle_id":           vehicle.ID,
-		"race_type":            "manual",
-		"race_status":          "Not Started",
+		"start_time": startTime.Add(-time.Minute).Format(time.RFC3339), // Updated start time
+		"end_time":   endTime.Add(time.Minute).Format(time.RFC3339),    // Updated end time
+		"status":     "not_started",
 	})
 
 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)

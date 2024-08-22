@@ -185,8 +185,8 @@ func seedDatabase(database *gorm.DB) {
 				AverageSpeed:       120 + (i * 5),
 				OutOfParcours:      uint8(i % 2),
 				UserID:             user.ID,
-				RaceType:           "manual",
-				RaceStatus:         "Completed",
+				Type:               "manual",
+				Status:             "completed",
 				Name:               raceNames[i],
 			}
 			database.Create(&race)

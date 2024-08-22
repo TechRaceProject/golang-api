@@ -11,7 +11,6 @@ import (
 )
 
 func CreateRaceHandler(c *gin.Context) {
-	fmt.Println("Start the creation of the race")
 	// Récupération de l'ID utilisateur depuis les paramètres de l'URL
 	userIdStr := c.Param("userId")
 	if userIdStr == "" || userIdStr == "0" || userIdStr == ":userId" {
@@ -41,13 +40,15 @@ func CreateRaceHandler(c *gin.Context) {
 
 	// Création du modèle Race avec les données validées
 	race := models.Race{
+		Name:               createRaceValidator.Name,
 		StartTime:          createRaceValidator.StartTime,
 		EndTime:            createRaceValidator.EndTime,
 		NumberOfCollisions: *createRaceValidator.NumberOfCollisions,
 		DistanceTravelled:  *createRaceValidator.DistanceTravelled,
 		AverageSpeed:       *createRaceValidator.AverageSpeed,
 		OutOfParcours:      *createRaceValidator.OutOfParcours,
-		RaceType:           createRaceValidator.RaceType,
+		Status:             createRaceValidator.Status,
+		Type:               createRaceValidator.Type,
 		VehicleID:          createRaceValidator.VehicleID,
 		UserID:             uint(userId), // Conversion de uint64 à uint
 	}
@@ -61,7 +62,7 @@ func CreateRaceHandler(c *gin.Context) {
 		services.SetInternalServerError(c, "Failed to create Race")
 		return
 	}
-	fmt.Println("Race created")
+
 	// Réponse de succès avec l'objet Race créé
 	services.SetCreated(c, "Race created successfully", race)
 }

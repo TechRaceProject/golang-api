@@ -14,26 +14,13 @@ type CreateRaceValidator struct {
 	DistanceTravelled  *int       `json:"distance_travelled" validate:"required,min=0,gte=0"`
 	AverageSpeed       *int       `json:"average_speed" validate:"required,min=0,gte=0"`
 	OutOfParcours      *uint8     `json:"out_of_parcours" validate:"required,min=0,gte=0"`
-	RaceType           string     `json:"race_type" validate:"required"`
-	RaceStatus         string     `json:"race_status" validate:"required,race_status_valid"`
+	Status             string     `json:"status" validate:"required,oneof='not_started' 'in_progress' 'completed'"`
+	Type               string     `json:"type" validate:"required,oneof='manual' 'auto'"`
 	VehicleID          uint       `json:"vehicle_id" validate:"required"`
-}
-
-func ValidateRaceStatus(fl validator.FieldLevel) bool {
-	status := fl.Field().String()
-	validStatuses := []string{"Not Started", "In Progress", "Completed"}
-	for _, validStatus := range validStatuses {
-		if status == validStatus {
-			return true
-		}
-	}
-	return false
 }
 
 func (c *CreateRaceValidator) Validate() error {
 	validate := validator.New()
-
-	validate.RegisterValidation("race_status_valid", ValidateRaceStatus)
 
 	return validate.Struct(c)
 }

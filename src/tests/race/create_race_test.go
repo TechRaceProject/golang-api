@@ -47,8 +47,8 @@ func Test_create_race_successfully(t *testing.T) {
 		"out_of_parcours":      1,
 		"user_id":              user.ID,
 		"vehicle_id":           vehicle.ID,
-		"race_type":            "manual",
-		"race_status":          "Not Started",
+		"type":                 "manual",
+		"status":               "not_started",
 	})
 
 	// Perform the authenticated request
