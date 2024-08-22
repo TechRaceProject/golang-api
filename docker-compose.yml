@@ -34,9 +34,10 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: database
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD", "mysql", "-uroot", "-proot", "-e", "SELECT 1"]
+      interval: 5s
       timeout: 2s
-      retries: 10
+      retries: 3
     image: mysql:latest
     ports:
       - "3306:3306"
