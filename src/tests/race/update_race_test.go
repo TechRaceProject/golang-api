@@ -50,6 +50,7 @@ func Test_update_race_successfully(t *testing.T) {
 		"user_id":              2, // Assume user ID is updated
 		"vehicle_id":           vehicle.ID,
 		"race_type":            "manual",
+		"race_status":          "Not Started",
 	})
 
 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
