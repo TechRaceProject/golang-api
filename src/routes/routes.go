@@ -12,12 +12,13 @@ import (
 func SetupCors(router *gin.Engine) *gin.Engine {
 	allowedOrigins := []string{
 		os.Getenv("APP_FRONTEND_URL"),
+		"http://127.0.0.1:5173",
 	}
 
 	corsConfig := cors.Config{
 		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}
