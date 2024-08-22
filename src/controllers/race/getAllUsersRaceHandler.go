@@ -22,13 +22,7 @@ func GetAllUsersRaceHandler(c *gin.Context) {
 		return
 	}
 
-	// Requête pour trouver toutes les courses pour un utilisateur donné
-	query := db.Where("user_id = ?", uint(userId)).Find(&races)
-
-	if query.RowsAffected == 0 {
-		services.SetNotFound(c, "No races found for this user")
-		return
-	}
+	db.Where("user_id = ?", uint(userId)).Find(&races)
 
 	services.SetOK(c, "User races retrieved successfully", races)
 }
