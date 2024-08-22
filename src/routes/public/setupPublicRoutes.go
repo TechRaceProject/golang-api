@@ -2,6 +2,7 @@ package public
 
 import (
 	"api/src/controllers"
+	"api/src/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,4 +17,7 @@ func SetupPublicRoutes(routerGroup *gin.RouterGroup) {
 			"message": "Hello World!",
 		})
 	})
+
+	//todo: passer cette route en authenticated
+	routerGroup.GET("/sse", services.SSEHandler)
 }
