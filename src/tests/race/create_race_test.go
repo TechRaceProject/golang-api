@@ -38,6 +38,7 @@ func Test_create_race_successfully(t *testing.T) {
 
 	// Prepare the JSON body for the POST request
 	createBody, _ := json.Marshal(map[string]interface{}{
+		"name":                 "testuser",
 		"start_time":           startTime.Format(time.RFC3339),
 		"end_time":             endTime.Format(time.RFC3339),
 		"number_of_collisions": 5,
@@ -47,6 +48,7 @@ func Test_create_race_successfully(t *testing.T) {
 		"user_id":              user.ID,
 		"vehicle_id":           vehicle.ID,
 		"race_type":            "manual",
+		"race_status":          "Not Started",
 	})
 
 	// Perform the authenticated request
