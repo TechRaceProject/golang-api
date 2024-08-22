@@ -81,5 +81,25 @@ func UpdateVehicleStateHandler(c *gin.Context) {
 
 	connection.Where("id = ?", vehiculeStateId).Preload(clause.Associations).First(&vehicleState)
 
+	err := broadcastUpdatedVehicleState(vehicleState)
+
+	if err != nil {
+		services.SetInternalServerError(c, "Error while broadcasting vehicle state update")
+
+		return
+	}
+
 	services.SetOK(c, "Vehicule state successfully updated", vehicleState)
+}
+
+func broadcastUpdatedVehicleState(vehicleState models.VehicleState) error {
+	json, err := vehicleState.ToJson()
+
+	if err != nil {
+		return err
+	}
+
+	go services.BroadcastMessage(json)
+
+	return nil
 }
