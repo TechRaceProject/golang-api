@@ -171,6 +171,8 @@ func seedDatabase(database *gorm.DB) {
 			continue
 		}
 
+		raceNames := []string{"Morning Sprint", "Afternoon Challenge", "Evening Marathon"}
+
 		for i := 0; i < 3; i++ {
 			startTime := time.Now().Add(time.Duration(i) * time.Hour)
 			endTime := startTime.Add(1 * time.Hour)
@@ -183,6 +185,9 @@ func seedDatabase(database *gorm.DB) {
 				AverageSpeed:       120 + (i * 5),
 				OutOfParcours:      uint8(i % 2),
 				UserID:             user.ID,
+				RaceType:           "manual",
+				RaceStatus:         "Completed",
+				Name:               raceNames[i],
 			}
 			database.Create(&race)
 		}
