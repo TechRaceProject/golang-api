@@ -130,7 +130,6 @@ func seedDatabase(database *gorm.DB) {
 	var emails = []string{"l-david@test.com", "a-goliath@test.com", "q-pierre@test.com"}
 	hashedPassword, _ := services.HashPassword("password")
 
-	// Seed users
 	for i := 0; i < len(usernames); i++ {
 		database.FirstOrCreate(&models.User{}, models.User{
 			Username: &usernames[i],
@@ -139,7 +138,6 @@ func seedDatabase(database *gorm.DB) {
 		})
 	}
 
-	// Seed a vehicle if not already present
 	var vehicle models.Vehicle
 	database.FirstOrCreate(&vehicle, models.Vehicle{
 		Name:        "Seed Vehicle",
@@ -147,12 +145,32 @@ func seedDatabase(database *gorm.DB) {
 		IsAvailable: false,
 	})
 
-	// Fetch all users
 	var users []models.User
+	var vehicles []models.Vehicle
+	var races []models.Race
+	var userAlreadyHaveRaces bool
 	database.Find(&users)
+	database.Find(&vehicles)
 
-	// Seed races for each user
 	for _, user := range users {
+		var userAlreadyHaveVehicleStateForThisVehicle bool
+
+		for _, vehicle := range vehicles {
+			userAlreadyHaveVehicleStateForThisVehicle = database.Where("user_id = ? AND vehicle_id = ?", user.ID, vehicle.ID).
+				Find(&models.VehicleState{}).
+				RowsAffected > 0
+
+			if !userAlreadyHaveVehicleStateForThisVehicle {
+				vehicle.InitVehicleState(&user, database)
+			}
+		}
+
+		userAlreadyHaveRaces = database.Where("user_id = ?", user.ID).Find(&races).RowsAffected >= 3
+
+		if userAlreadyHaveRaces {
+			continue
+		}
+
 		for i := 0; i < 3; i++ {
 			startTime := time.Now().Add(time.Duration(i) * time.Hour)
 			endTime := startTime.Add(1 * time.Hour)
