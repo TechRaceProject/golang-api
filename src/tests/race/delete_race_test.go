@@ -36,7 +36,7 @@ func Test_delete_race_successfully(t *testing.T) {
 		AverageSpeed:       120,
 		OutOfParcours:      0,
 		UserID:             1,
-		RaceType:           "manual",
+		Type:               "manual",
 	}
 	databaseConnection.Create(&race)
 
