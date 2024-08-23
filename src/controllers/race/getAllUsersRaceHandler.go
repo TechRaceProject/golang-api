@@ -22,7 +22,7 @@ func GetAllUsersRaceHandler(c *gin.Context) {
 		return
 	}
 
-	db.Where("user_id = ?", uint(userId)).Find(&races)
+	db.Where("user_id = ?", uint(userId)).Preload("Vehicle").Find(&races)
 
 	services.SetOK(c, "User races retrieved successfully", races)
 }
