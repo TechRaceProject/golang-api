@@ -52,7 +52,7 @@ func UpdateRaceHandler(c *gin.Context) {
 	}
 
 	// Sauvegarde les modifications dans la base de données
-	if err := db.Save(&existingRace).Error; err != nil {
+	if err := db.Preload("Vehicle").Save(&existingRace).Error; err != nil {
 		fmt.Printf("Error updating Race: %v\n", err)
 		services.SetInternalServerError(c, "Failed to update Race")
 		return

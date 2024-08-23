@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Vehicle struct {
 	ID          uint   `gorm:"primaryKey"`
-	Name        string `json:"vehicle_name"`
+	Name        string `json:"name"`
 	IpAdress    string `json:"ip_adress"`
 	IsAvailable bool   `json:"is_available"`
 	Model

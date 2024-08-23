@@ -8,8 +8,9 @@ type Race struct {
 	ID                 uint       `gorm:"primaryKey"`
 	Name               string     `json:"name"`
 	VehicleID          uint       `json:"vehicle_id"`
-	StartTime          time.Time  `json:"start_time"`
-	EndTime            *time.Time `json:"end_time"`
+	Vehicle            Vehicle    `gorm:"foreignKey:VehicleID" json:"vehicle"`
+	StartTime          time.Time  `gorm:"type:datetime" json:"start_time"`
+	EndTime            *time.Time `gorm:"type:datetime" json:"end_time"`
 	NumberOfCollisions uint8      `json:"number_of_collisions"`
 	DistanceTravelled  int        `json:"distance_travelled"`
 	AverageSpeed       int        `json:"average_speed"`
@@ -17,5 +18,6 @@ type Race struct {
 	Status             string     `json:"status"`
 	Type               string     `json:"type"`
 	UserID             uint       `json:"user_id"`
+	User               User       `gorm:"foreignKey:UserID" json:"-"`
 	Model
 }

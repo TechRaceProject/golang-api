@@ -50,7 +50,7 @@ func CreateRaceHandler(c *gin.Context) {
 		Status:             createRaceValidator.Status,
 		Type:               createRaceValidator.Type,
 		VehicleID:          createRaceValidator.VehicleID,
-		UserID:             uint(userId), // Conversion de uint64 à uint
+		UserID:             uint(userId),
 	}
 
 	// Récupération de la connexion à la base de données
@@ -62,6 +62,8 @@ func CreateRaceHandler(c *gin.Context) {
 		services.SetInternalServerError(c, "Failed to create Race")
 		return
 	}
+
+	db.Preload("Vehicle").Find(&race)
 
 	// Réponse de succès avec l'objet Race créé
 	services.SetCreated(c, "Race created successfully", race)
