@@ -69,7 +69,7 @@ func performMigrations(database *gorm.DB) {
 		&models.SecondaryLedColor{},
 		&models.BuzzerVariable{},
 		&models.HeadAngle{},
-		&models.VehicleBatteryModel{},
+		&models.VehicleBattery{},
 	)
 
 	if err != nil {
