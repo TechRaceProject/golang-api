@@ -1,13 +1,23 @@
+# Start from the official Golang image
 FROM golang:1.22.4
 
-RUN mkdir /app
-
+# Set the working directory inside the container
 WORKDIR /app
 
-ADD . /app
+# Copy the go.mod and go.sum files first to leverage Docker cache for dependency management
+COPY go.mod go.sum ./
 
-RUN go install -mod=mod github.com/githubnemo/CompileDaemon
-
+# Download Go module dependencies
 RUN go mod download
 
-ENTRYPOINT CompileDaemon --build="go build main.go" --command=./main
+# Copy the rest of the application code to the working directory
+COPY . .
+
+# Install CompileDaemon for hot-reloading
+RUN go install github.com/githubnemo/CompileDaemon@latest
+
+# Set the working directory to where main.go is located
+WORKDIR /app/cmd/server
+
+# Use CompileDaemon to automatically rebuild and restart the Go app on changes
+ENTRYPOINT CompileDaemon --build="go build -o main ." --command=./main
