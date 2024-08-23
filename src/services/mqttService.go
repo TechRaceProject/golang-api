@@ -1,7 +1,6 @@
 package services
 
 import (
-	"api/src/models"
 	"fmt"
 	"strconv"
 
@@ -14,29 +13,22 @@ func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	fmt.Println(payload)
 	fmt.Println(msg.Topic())
 
-	value, err := strconv.ParseFloat(payload, 64)
+	_, err := strconv.ParseFloat(payload, 64)
 	if err != nil {
 		fmt.Println("Error converting payload to float:", err)
 		return
 	}
 
-	var sensorData models.SensorData
-
 	switch msg.Topic() {
 	case "esp32/track":
-		sensorData.Track = value
+		fmt.Println("esp32/track")
 	case "esp32/sonar":
-		sensorData.Sonar = value
+		fmt.Println("esp32/sonar")
 	case "esp32/light":
-		sensorData.Light = value
+		fmt.Println("esp32/light")
 	default:
 		fmt.Println("Invalid topic")
 		return
-	}
-
-	result := GetConnection().Create(&sensorData)
-	if result.Error != nil {
-		fmt.Println("Error inserting data into database:", result.Error)
 	}
 }
 
