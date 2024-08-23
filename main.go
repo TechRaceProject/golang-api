@@ -62,9 +62,7 @@ func closeDatabaseConnection(database *gorm.DB) {
 func performMigrations(database *gorm.DB) {
 	err := database.AutoMigrate(
 		&models.User{},
-		&models.SensorData{},
 		&models.Vehicle{},
-		&models.Fool{},
 		&models.Race{},
 		&models.VehicleState{},
 		&models.PrimaryLedColor{},
