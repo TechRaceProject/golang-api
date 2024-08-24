@@ -34,7 +34,7 @@ func Test_update_race_successfully(t *testing.T) {
 		StartTime:          startTime,
 		EndTime:            nil,
 		NumberOfCollisions: 3,
-		DistanceTravelled:  100,
+		DistanceCovered:    100,
 		AverageSpeed:       120,
 		OutOfParcours:      0,
 		UserID:             1,

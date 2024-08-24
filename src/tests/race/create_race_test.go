@@ -43,7 +43,7 @@ func Test_create_race_successfully(t *testing.T) {
 		"start_time":           startTime,
 		"end_time":             endTime,
 		"number_of_collisions": 5,
-		"distance_travelled":   150,
+		"distance_covered":     150,
 		"average_speed":        130,
 		"out_of_parcours":      1,
 		"user_id":              user.ID,

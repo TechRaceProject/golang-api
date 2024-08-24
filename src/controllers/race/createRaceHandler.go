@@ -52,7 +52,7 @@ func CreateRaceHandler(c *gin.Context) {
 		StartTime:          startTime,
 		EndTime:            endTime,
 		NumberOfCollisions: *createRaceValidator.NumberOfCollisions,
-		DistanceTravelled:  *createRaceValidator.DistanceTravelled,
+		DistanceCovered:    *createRaceValidator.DistanceCovered,
 		AverageSpeed:       *createRaceValidator.AverageSpeed,
 		OutOfParcours:      *createRaceValidator.OutOfParcours,
 		Status:             createRaceValidator.Status,
