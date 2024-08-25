@@ -2,6 +2,7 @@ package race
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/tests"
 	"fmt"
 	"net/http"
@@ -24,13 +25,12 @@ func Test_delete_race_successfully(t *testing.T) {
 	}
 	databaseConnection.Create(&vehicle)
 
-	startTime := time.Now()
-	endTime := startTime.Add(time.Hour)
+	var startTime attributes.CustomTime
+	startTime.Time = time.Now()
 
 	race := models.Race{
 		VehicleID:          vehicle.ID,
 		StartTime:          startTime,
-		EndTime:            &endTime,
 		NumberOfCollisions: 3,
 		DistanceTravelled:  100,
 		AverageSpeed:       120,

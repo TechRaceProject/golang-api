@@ -2,6 +2,7 @@ package main
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/routes"
 	"api/src/services"
 	"fmt"
@@ -173,12 +174,17 @@ func seedDatabase(database *gorm.DB) {
 		raceNames := []string{"Morning Sprint", "Afternoon Challenge", "Evening Marathon"}
 
 		for i := 0; i < 3; i++ {
-			startTime := time.Now().Add(time.Duration(i) * time.Hour)
-			endTime := startTime.Add(1 * time.Hour)
+			var startTime attributes.CustomTime
+			startTime.Time = time.Now().Add(time.Duration(i) * time.Hour)
+
+			endTime := &attributes.CustomTime{}
+
+			endTime.Time = startTime.Time.Add(time.Duration(i) * time.Minute)
+
 			race := models.Race{
 				VehicleID:          vehicle.ID,
 				StartTime:          startTime,
-				EndTime:            &endTime,
+				EndTime:            endTime,
 				NumberOfCollisions: uint8(i + 1),
 				DistanceTravelled:  100 + (i * 10),
 				AverageSpeed:       120 + (i * 5),
