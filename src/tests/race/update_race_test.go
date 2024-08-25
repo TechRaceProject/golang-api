@@ -41,9 +41,13 @@ func Test_update_race_successfully(t *testing.T) {
 	}
 	databaseConnection.Create(&race)
 
+	endTime := &attributes.CustomTime{
+		Time: startTime.Add(time.Minute),
+	}
+
 	updateBody, _ := json.Marshal(map[string]interface{}{
-		"end_time": startTime.Add(time.Minute).Format(time.RFC3339), // Updated end time
-		"status":   "not_started",
+		"end_time": endTime,
+		"status":   "completed",
 	})
 
 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
