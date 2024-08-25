@@ -1,13 +1,14 @@
 package models
 
 import (
-	"time"
+	"api/src/models/attributes"
 
 	"gorm.io/gorm"
 )
 
 type Model struct {
-	CreatedAt time.Time      `gorm:"type:datetime"`
-	UpdatedAt time.Time      `gorm:"type:datetime"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	// json format YYYY-MM-DD HH:MM:SS
+	CreatedAt attributes.CustomTime `gorm:"type:datetime" json:"created_at"`
+	UpdatedAt attributes.CustomTime `gorm:"type:datetime" json:"updated_at"`
+	DeletedAt gorm.DeletedAt        `gorm:"type:datetime;index" json:"-"`
 }
