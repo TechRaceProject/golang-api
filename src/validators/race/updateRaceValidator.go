@@ -1,15 +1,15 @@
 package validators
 
 import (
-	"time"
+	"api/src/models/attributes"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type UpdateRaceValidator struct {
-	EndTime *time.Time `json:"end_time" validate:"omitempty"`
-	Name    string     `json:"name"`
-	Status  string     `json:"status" validate:"oneof='not_started' 'in_progress' 'completed'"`
+	EndTime *attributes.CustomTime `json:"end_time"`
+	Name    string                 `json:"name"`
+	Status  string                 `json:"status" validate:"oneof='not_started' 'in_progress' 'completed' ''"`
 }
 
 func (u *UpdateRaceValidator) Validate() error {

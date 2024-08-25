@@ -2,6 +2,7 @@ package race
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/tests"
 	"encoding/json"
 	"fmt"
@@ -40,12 +41,13 @@ func Test_get_races_index(t *testing.T) {
 	databaseConnection.Create(&vehicle)
 
 	// Create a mock race associated with the user
-	startTime := time.Now()
-	endTime := startTime.Add(time.Hour)
+	var startTime attributes.CustomTime
+	startTime.Time = time.Now()
+
 	race := models.Race{
 		VehicleID:          vehicle.ID,
 		StartTime:          startTime,
-		EndTime:            &endTime,
+		EndTime:            nil,
 		NumberOfCollisions: 3,
 		DistanceTravelled:  100,
 		AverageSpeed:       120,

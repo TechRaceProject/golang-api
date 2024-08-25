@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/services"
 	"errors"
 	"net/http"
@@ -32,11 +33,11 @@ type Claims struct {
 }
 
 type UserInfo struct {
-	ID        uint      `json:"id"`
-	Email     string    `json:"email"`
-	Username  string    `json:"username"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint                  `json:"id"`
+	Email     string                `json:"email"`
+	Username  string                `json:"username"`
+	CreatedAt attributes.CustomTime `json:"created_at"`
+	UpdatedAt attributes.CustomTime `json:"updated_at"`
 }
 
 func Signup(c *gin.Context) {
