@@ -2,6 +2,7 @@ package race
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/tests"
 	"encoding/json"
 	"fmt"
@@ -33,14 +34,14 @@ func Test_create_race_successfully(t *testing.T) {
 	databaseConnection.Create(&vehicle)
 
 	// Define start and end times for the race
-	startTime := time.Now()
-	endTime := startTime.Add(time.Hour)
+	startTime := attributes.CustomTime{Time: time.Now()}
+	endTime := &attributes.CustomTime{Time: startTime.Add(time.Minute)}
 
 	// Prepare the JSON body for the POST request
 	createBody, _ := json.Marshal(map[string]interface{}{
 		"name":                 "testuser",
-		"start_time":           startTime.Format(time.RFC3339),
-		"end_time":             endTime.Format(time.RFC3339),
+		"start_time":           startTime,
+		"end_time":             endTime,
 		"number_of_collisions": 5,
 		"distance_travelled":   150,
 		"average_speed":        130,

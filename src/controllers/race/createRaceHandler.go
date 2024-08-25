@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/services"
 	validators "api/src/validators/race"
 	"fmt"
@@ -38,11 +39,18 @@ func CreateRaceHandler(c *gin.Context) {
 		return
 	}
 
+	startTime := createRaceValidator.StartTime
+	var endTime *attributes.CustomTime
+
+	if createRaceValidator.EndTime != nil {
+		endTime = createRaceValidator.EndTime
+	}
+
 	// Création du modèle Race avec les données validées
 	race := models.Race{
 		Name:               createRaceValidator.Name,
-		StartTime:          createRaceValidator.StartTime,
-		EndTime:            createRaceValidator.EndTime,
+		StartTime:          startTime,
+		EndTime:            endTime,
 		NumberOfCollisions: *createRaceValidator.NumberOfCollisions,
 		DistanceTravelled:  *createRaceValidator.DistanceTravelled,
 		AverageSpeed:       *createRaceValidator.AverageSpeed,

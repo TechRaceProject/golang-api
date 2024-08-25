@@ -2,6 +2,7 @@ package race
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/tests"
 	"encoding/json"
 	"fmt"
@@ -25,13 +26,13 @@ func Test_update_race_successfully(t *testing.T) {
 	}
 	databaseConnection.Create(&vehicle)
 
-	startTime := time.Now()
-	endTime := startTime.Add(time.Hour)
+	var startTime attributes.CustomTime
+	startTime.Time = time.Now()
 
 	race := models.Race{
 		VehicleID:          vehicle.ID,
 		StartTime:          startTime,
-		EndTime:            &endTime,
+		EndTime:            nil,
 		NumberOfCollisions: 3,
 		DistanceTravelled:  100,
 		AverageSpeed:       120,
@@ -40,10 +41,13 @@ func Test_update_race_successfully(t *testing.T) {
 	}
 	databaseConnection.Create(&race)
 
+	endTime := &attributes.CustomTime{
+		Time: startTime.Add(time.Minute),
+	}
+
 	updateBody, _ := json.Marshal(map[string]interface{}{
-		"start_time": startTime.Add(-time.Minute).Format(time.RFC3339), // Updated start time
-		"end_time":   endTime.Add(time.Minute).Format(time.RFC3339),    // Updated end time
-		"status":     "not_started",
+		"end_time": endTime,
+		"status":   "completed",
 	})
 
 	requestURL := fmt.Sprintf("/api/races/%d", race.ID)
