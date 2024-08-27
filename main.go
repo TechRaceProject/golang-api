@@ -187,7 +187,7 @@ func seedDatabase(database *gorm.DB) {
 				EndTime:           endTime,
 				CollisionDuration: 0,
 				DistanceCovered:   100 + (i * 10),
-				AverageSpeed:      10 + float64(i),
+				AverageSpeed:      float64(i),
 				OutOfParcours:     0,
 				UserID:            user.ID,
 				Type:              "manual",
