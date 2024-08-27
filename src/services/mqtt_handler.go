@@ -2,9 +2,11 @@ package services
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type MQTTHandler struct{}
@@ -63,6 +65,16 @@ func (h MQTTHandler) HandleMQTTRaceData(id string, column string, payload string
 
 	if columnToUpdate == "status" {
 		connection.Model(&race).Update("status", valueToUpdate)
+
+		if valueToUpdate == "completed" {
+
+			race.EndTime = &attributes.CustomTime{
+				Time: time.Now(),
+			}
+
+			connection.Model(&race).Update("end_time", race.EndTime)
+		}
+
 		return
 	}
 
