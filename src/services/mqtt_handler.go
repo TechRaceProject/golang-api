@@ -18,15 +18,12 @@ func (h MQTTHandler) HandleMQTTRaceData(id string, column string, payload string
 		return
 	}
 
-	var columnToUpdate string
+	var columnToUpdate string = column
 	var valueToUpdate interface{}
+	payload = strings.TrimSpace(payload)
 
 	switch column {
-	case "distance_covered", "average_speed", "out_of_parcours", "collision_duration":
-		columnToUpdate = column
-
-		payload = strings.TrimSpace(payload)
-
+	case "distance_covered", "out_of_parcours", "collision_duration":
 		// we are always expecting a float from the ESP32 because of the way we are sending the data
 		payloadToFloat, err := strconv.ParseFloat(payload, 64)
 
@@ -36,6 +33,20 @@ func (h MQTTHandler) HandleMQTTRaceData(id string, column string, payload string
 		}
 
 		valueToUpdate = int(payloadToFloat)
+
+	case "average_speed":
+		// we are always expecting a float from the ESP32 because of the way we are sending the data
+		payloadToFloat, err := strconv.ParseFloat(payload, 64)
+
+		if err != nil {
+			fmt.Printf("Error while converting payload to float for %s: %v\n", column, err)
+			return
+		}
+
+		valueToUpdate = payloadToFloat
+
+	case "status":
+		valueToUpdate = payload
 
 	default:
 		return
@@ -48,6 +59,11 @@ func (h MQTTHandler) HandleMQTTRaceData(id string, column string, payload string
 
 	if race.Status == "not_started" {
 		connection.Model(&race).Update("status", "in_progress")
+	}
+
+	if columnToUpdate == "status" {
+		connection.Model(&race).Update("status", valueToUpdate)
+		return
 	}
 
 	connection.Model(&race).Update(columnToUpdate, valueToUpdate)

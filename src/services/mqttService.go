@@ -11,11 +11,6 @@ func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	topic := msg.Topic()
 	payload := string(msg.Payload())
 
-	// fmt.Println("############### MESSAGE RECEIVED ###############")
-	// fmt.Println(msg.Topic())
-	// fmt.Println(payload)
-	// fmt.Println("############# END #################")
-
 	messageParts := strings.Split(topic, "/")
 
 	if messageParts[0] != "esp32" {
@@ -32,6 +27,14 @@ func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	model := messageParts[1]
 	id := messageParts[2]
 	column := messageParts[3]
+
+	// fmt.Println("############### MESSAGE RECEIVED ###############")
+	// fmt.Println(msg.Topic())
+	// fmt.Println(payload)
+	// fmt.Println("models: ", model)
+	// fmt.Println("id: ", id)
+	// fmt.Println("column: ", column)
+	// fmt.Println("############# END #################")
 
 	switch model {
 	case "races":
