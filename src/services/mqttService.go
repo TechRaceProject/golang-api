@@ -2,32 +2,44 @@ package services
 
 import (
 	"fmt"
-	"strconv"
+	"strings"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
-	fmt.Println("Received message:")
+	topic := msg.Topic()
 	payload := string(msg.Payload())
-	fmt.Println(payload)
-	fmt.Println(msg.Topic())
 
-	_, err := strconv.ParseFloat(payload, 64)
-	if err != nil {
-		fmt.Println("Error converting payload to float:", err)
+	messageParts := strings.Split(topic, "/")
+
+	if messageParts[0] != "esp32" {
 		return
 	}
 
-	switch msg.Topic() {
-	case "esp32/track":
-		fmt.Println("esp32/track")
-	case "esp32/sonar":
-		fmt.Println("esp32/sonar")
-	case "esp32/light":
-		fmt.Println("esp32/light")
+	if len(messageParts) < 4 {
+		fmt.Println("Invalid message received. Must have at least 4 parts.")
+		return
+	}
+
+	mqttHandler := MQTTHandler{}
+
+	model := messageParts[1]
+	id := messageParts[2]
+	column := messageParts[3]
+
+	// fmt.Println("############### MESSAGE RECEIVED ###############")
+	// fmt.Println(msg.Topic())
+	// fmt.Println(payload)
+	// fmt.Println("models: ", model)
+	// fmt.Println("id: ", id)
+	// fmt.Println("column: ", column)
+	// fmt.Println("############# END #################")
+
+	switch model {
+	case "races":
+		mqttHandler.HandleMQTTRaceData(id, column, payload)
 	default:
-		fmt.Println("Invalid topic")
 		return
 	}
 }

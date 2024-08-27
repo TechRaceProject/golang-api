@@ -74,118 +74,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Post",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8000/api/vehicles",
-							"host": [
-								"localhost"
-							],
-							"port": "8000",
-							"path": [
-								"api",
-								"vehicles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Patch",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8000/api/vehicles",
-							"host": [
-								"localhost"
-							],
-							"port": "8000",
-							"path": [
-								"api",
-								"vehicles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:8000/api/vehicles/:id",
-							"host": [
-								"localhost"
-							],
-							"port": "8000",
-							"path": [
-								"api",
-								"vehicles",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": ""
-								}
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -222,7 +110,7 @@
 					"response": []
 				},
 				{
-					"name": "Get",
+					"name": "Index user races",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -237,20 +125,21 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8000/api/races/:id",
+							"raw": "localhost:8000/api/users/:userId/races",
 							"host": [
 								"localhost"
 							],
 							"port": "8000",
 							"path": [
 								"api",
-								"races",
-								":id"
+								"users",
+								":userId",
+								"races"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "1"
+									"key": "userId",
+									"value": "4"
 								}
 							]
 						}
@@ -274,7 +163,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "",
+							"raw": "{\n    \"start_time\": \"2024-08-25 19:07:00\",\n    \"type\": \"manual\",\n    \"name\": \"ma course\",\n    \"status\": \"not_started\",\n    \"average_speed\": 0.13,\n    \"vehicle_id\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -282,14 +171,22 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8000/api/races",
+							"raw": "localhost:8000/api/users/:userId/races",
 							"host": [
 								"localhost"
 							],
 							"port": "8000",
 							"path": [
 								"api",
+								"users",
+								":userId",
 								"races"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -312,7 +209,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \n}",
+							"raw": "{\n    \"end_time\": \"2024-08-25 19:09:00\",\n    \"status\": \"completed\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -320,7 +217,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8000/api/races/:id",
+							"raw": "localhost:8000/api/races/:raceId",
 							"host": [
 								"localhost"
 							],
@@ -328,12 +225,12 @@
 							"path": [
 								"api",
 								"races",
-								":id"
+								":raceId"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "1"
+									"key": "raceId",
+									"value": "15"
 								}
 							]
 						}
@@ -356,7 +253,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8000/api/races/:id",
+							"raw": "localhost:8000/api/races/5",
 							"host": [
 								"localhost"
 							],
@@ -364,6 +261,86 @@
 							"path": [
 								"api",
 								"races",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicle state",
+			"item": [
+				{
+					"name": "get a vehicle state",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/vehicle-states/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"vehicle-states",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "patch a vehicle state",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"face\": 0,\n    \"led_animation\": 0,\n    \"buzzer_alarm\": 0,\n    \"video_activated\": 0,\n    \"PrimaryLedColor\": {\n        \"led_identifier\": 0,\n        \"red\": 0,\n        \"green\": 0,\n        \"blue\": 0\n    },\n    \"SecondaryLedColor\": {\n        \"binary_representation\": 0,\n        \"red\": 0,\n        \"green\": 0,\n        \"blue\": 0\n    },\n    \"BuzzerVariable\": {\n        \"activated\": 0,\n        \"frequency\": 0\n    },\n    \"HeadAngle\": {\n        \"vertical_angle\": 0,\n        \"horizontal_angle\": 0\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/api/vehicle-states/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"vehicle-states",
 								":id"
 							],
 							"variable": [
