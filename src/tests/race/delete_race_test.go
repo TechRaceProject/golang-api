@@ -29,14 +29,14 @@ func Test_delete_race_successfully(t *testing.T) {
 	startTime.Time = time.Now()
 
 	race := models.Race{
-		VehicleID:          vehicle.ID,
-		StartTime:          startTime,
-		NumberOfCollisions: 3,
-		DistanceTravelled:  100,
-		AverageSpeed:       120,
-		OutOfParcours:      0,
-		UserID:             1,
-		Type:               "manual",
+		VehicleID:         vehicle.ID,
+		StartTime:         startTime,
+		CollisionDuration: 3,
+		DistanceCovered:   100,
+		AverageSpeed:      10,
+		OutOfParcours:     0,
+		UserID:            1,
+		Type:              "manual",
 	}
 	databaseConnection.Create(&race)
 

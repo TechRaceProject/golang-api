@@ -30,14 +30,14 @@ func Test_update_race_successfully(t *testing.T) {
 	startTime.Time = time.Now()
 
 	race := models.Race{
-		VehicleID:          vehicle.ID,
-		StartTime:          startTime,
-		EndTime:            nil,
-		NumberOfCollisions: 3,
-		DistanceTravelled:  100,
-		AverageSpeed:       120,
-		OutOfParcours:      0,
-		UserID:             1,
+		VehicleID:         vehicle.ID,
+		StartTime:         startTime,
+		EndTime:           nil,
+		CollisionDuration: 3,
+		DistanceCovered:   100,
+		AverageSpeed:      10,
+		OutOfParcours:     0,
+		UserID:            1,
 	}
 	databaseConnection.Create(&race)
 
