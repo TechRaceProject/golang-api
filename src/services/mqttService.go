@@ -11,6 +11,11 @@ func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	topic := msg.Topic()
 	payload := string(msg.Payload())
 
+	// fmt.Println("############### MESSAGE RECEIVED ###############")
+	// fmt.Println(msg.Topic())
+	// fmt.Println(payload)
+	// fmt.Println("############# END #################")
+
 	messageParts := strings.Split(topic, "/")
 
 	if messageParts[0] != "esp32" {
@@ -34,11 +39,6 @@ func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	default:
 		return
 	}
-
-	// fmt.Println("############### MESSAGE RECEIVED ###############")
-	// fmt.Println(msg.Topic())
-	// fmt.Println(payload)
-	// fmt.Println("############# END #################")
 }
 
 func connectHandler(client mqtt.Client) {

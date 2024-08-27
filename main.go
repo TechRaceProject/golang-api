@@ -149,7 +149,7 @@ func seedDatabase(database *gorm.DB) {
 	var vehicles []models.Vehicle
 	var races []models.Race
 	var userAlreadyHaveRaces bool
-	database.Find(&users)
+	database.Where("username IN ?", usernames).Find(&users)
 	database.Find(&vehicles)
 
 	for _, user := range users {
@@ -182,17 +182,17 @@ func seedDatabase(database *gorm.DB) {
 			endTime.Time = startTime.Time.Add(time.Duration(i) * time.Minute)
 
 			race := models.Race{
-				VehicleID:          vehicle.ID,
-				StartTime:          startTime,
-				EndTime:            endTime,
-				NumberOfCollisions: uint8(i + 1),
-				DistanceCovered:    100 + (i * 10),
-				AverageSpeed:       120 + (i * 5),
-				OutOfParcours:      uint8(i % 2),
-				UserID:             user.ID,
-				Type:               "manual",
-				Status:             "completed",
-				Name:               raceNames[i],
+				VehicleID:         vehicle.ID,
+				StartTime:         startTime,
+				EndTime:           endTime,
+				CollisionDuration: 0,
+				DistanceCovered:   100 + (i * 10),
+				AverageSpeed:      10 + float64(i),
+				OutOfParcours:     0,
+				UserID:            user.ID,
+				Type:              "manual",
+				Status:            "completed",
+				Name:              raceNames[i],
 			}
 			database.Create(&race)
 		}

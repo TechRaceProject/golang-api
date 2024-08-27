@@ -5,7 +5,6 @@ import (
 	"api/src/models/attributes"
 	"api/src/services"
 	validators "api/src/validators/race"
-	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -39,6 +38,13 @@ func CreateRaceHandler(c *gin.Context) {
 		return
 	}
 
+	db := services.GetConnection()
+
+	if db.Where("id = ?", userId).Find(&models.User{}).RowsAffected == 0 {
+		services.SetUnprocessableEntity(c, "User not found")
+		return
+	}
+
 	startTime := createRaceValidator.StartTime
 	var endTime *attributes.CustomTime
 
@@ -48,26 +54,22 @@ func CreateRaceHandler(c *gin.Context) {
 
 	// Création du modèle Race avec les données validées
 	race := models.Race{
-		Name:               createRaceValidator.Name,
-		StartTime:          startTime,
-		EndTime:            endTime,
-		NumberOfCollisions: *createRaceValidator.NumberOfCollisions,
-		DistanceCovered:    *createRaceValidator.DistanceCovered,
-		AverageSpeed:       *createRaceValidator.AverageSpeed,
-		OutOfParcours:      *createRaceValidator.OutOfParcours,
-		Status:             createRaceValidator.Status,
-		Type:               createRaceValidator.Type,
-		VehicleID:          createRaceValidator.VehicleID,
-		UserID:             uint(userId),
+		Name:              createRaceValidator.Name,
+		StartTime:         startTime,
+		EndTime:           endTime,
+		CollisionDuration: 0,
+		DistanceCovered:   0,
+		AverageSpeed:      0,
+		OutOfParcours:     0,
+		Status:            createRaceValidator.Status,
+		Type:              createRaceValidator.Type,
+		VehicleID:         createRaceValidator.VehicleID,
+		UserID:            uint(userId),
 	}
-
-	// Récupération de la connexion à la base de données
-	db := services.GetConnection()
 
 	// Création de l'enregistrement dans la base de données
 	if err := db.Create(&race).Error; err != nil {
-		fmt.Printf("Error creating Race: %v\n", err)
-		services.SetInternalServerError(c, "Failed to create Race")
+		services.SetInternalServerError(c, err.Error())
 		return
 	}
 
