@@ -6,6 +6,7 @@ import (
 	validators "api/src/validators/vehicleState"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -47,28 +48,32 @@ func UpdateVehicleStateHandler(c *gin.Context) {
 			VideoActivated: UpdateVehicleStateValidator.VideoActivated,
 		})
 
-	connection.Model(models.PrimaryLedColor{}).
-		Where("id = ?", vehicleState.PrimaryLedColorID).
-		Updates(models.PrimaryLedColor{
-			LedIdentifier: UpdateVehicleStateValidator.PrimaryLedColor.LedIdentifier,
-			Red:           UpdateVehicleStateValidator.PrimaryLedColor.Red,
-			Green:         UpdateVehicleStateValidator.PrimaryLedColor.Green,
-			Blue:          UpdateVehicleStateValidator.PrimaryLedColor.Blue,
-		})
+	for _, primaryLedColor := range *UpdateVehicleStateValidator.PrimaryLedColors {
+		model := models.PrimaryLedColor{
+			LedIdentifier: primaryLedColor.LedIdentifier,
+			Red:           primaryLedColor.Red,
+			Green:         primaryLedColor.Green,
+			Blue:          primaryLedColor.Blue,
+		}
 
-	connection.Model(models.BuzzerVariable{}).
-		Where("id = ?", vehicleState.BuzzerVariableID).
-		Updates(models.BuzzerVariable{
-			Activated: UpdateVehicleStateValidator.BuzzerVariable.Activated,
-			Frequency: UpdateVehicleStateValidator.BuzzerVariable.Frequency,
-		})
+		updatePrimaryLedColorRelationship(connection, model, vehicleState.ID)
+	}
 
-	connection.Model(models.HeadAngle{}).
-		Where("id = ?", vehicleState.HeadAngleID).
-		Updates(models.HeadAngle{
-			VerticalAngle:   UpdateVehicleStateValidator.HeadAngle.VerticalAngle,
-			HorizontalAngle: UpdateVehicleStateValidator.HeadAngle.HorizontalAngle,
-		})
+	buzzerVariable := models.BuzzerVariable{
+		ID:        *vehicleState.BuzzerVariableID,
+		Activated: UpdateVehicleStateValidator.BuzzerVariable.Activated,
+		Frequency: UpdateVehicleStateValidator.BuzzerVariable.Frequency,
+	}
+
+	updateBuzzerVariableRelationship(connection, buzzerVariable)
+
+	headAngle := models.HeadAngle{
+		ID:              *vehicleState.HeadAngleID,
+		VerticalAngle:   UpdateVehicleStateValidator.HeadAngle.VerticalAngle,
+		HorizontalAngle: UpdateVehicleStateValidator.HeadAngle.HorizontalAngle,
+	}
+
+	updateHeadAngleRelationship(connection, headAngle)
 
 	connection.Where("id = ?", vehiculeStateId).Preload(clause.Associations).First(&vehicleState)
 
@@ -81,6 +86,53 @@ func UpdateVehicleStateHandler(c *gin.Context) {
 	}
 
 	services.SetOK(c, "Vehicule state successfully updated", vehicleState)
+}
+
+func updateBuzzerVariableRelationship(connection *gorm.DB, buzzerVariable models.BuzzerVariable) error {
+	err := connection.Model(models.BuzzerVariable{}).
+		Where("id = ?", buzzerVariable.ID).
+		Updates(models.BuzzerVariable{
+			Activated: buzzerVariable.Activated,
+			Frequency: buzzerVariable.Frequency,
+		}).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func updateHeadAngleRelationship(connection *gorm.DB, headAngle models.HeadAngle) error {
+	err := connection.Model(models.HeadAngle{}).
+		Where("id = ?", headAngle.ID).
+		Updates(models.HeadAngle{
+			VerticalAngle:   headAngle.VerticalAngle,
+			HorizontalAngle: headAngle.HorizontalAngle,
+		}).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func updatePrimaryLedColorRelationship(connection *gorm.DB, primaryLedColor models.PrimaryLedColor, vehicleStateId uint) error {
+	err := connection.Model(models.PrimaryLedColor{}).
+		Where("vehicle_state_id = ?", vehicleStateId).
+		Where("led_identifier = ?", primaryLedColor.LedIdentifier).
+		Updates(models.PrimaryLedColor{
+			Red:   primaryLedColor.Red,
+			Green: primaryLedColor.Green,
+			Blue:  primaryLedColor.Blue,
+		}).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func broadcastUpdatedVehicleState(vehicleState models.VehicleState) error {

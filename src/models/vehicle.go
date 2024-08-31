@@ -28,19 +28,27 @@ func (vehicle *Vehicle) InitVehicleState(user *User, db *gorm.DB) (VehicleState,
 		return VehicleState{}, err
 	}
 
-	primaryLedColor := PrimaryLedColor{
-		LedIdentifier:  new(int),
-		Red:            &defaultUint8,
-		Green:          &defaultUint8,
-		Blue:           &defaultUint8,
-		VehicleStateID: vehicleState.ID,
+	binaryRepresentations := []int{4097, 4098, 4100, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}
+
+	primaryLedColors := []PrimaryLedColor{}
+
+	for _, binaryRepresentation := range binaryRepresentations {
+		primaryLedColor := PrimaryLedColor{
+			LedIdentifier:  &binaryRepresentation,
+			Red:            &defaultUint8,
+			Green:          &defaultUint8,
+			Blue:           &defaultUint8,
+			VehicleStateID: vehicleState.ID,
+		}
+
+		primaryLedColors = append(primaryLedColors, primaryLedColor)
 	}
 
-	if err := db.Create(&primaryLedColor).Error; err != nil {
+	if err := db.Create(&primaryLedColors).Error; err != nil {
 		return VehicleState{}, err
 	}
 
-	vehicleState.PrimaryLedColor = &primaryLedColor
+	vehicleState.PrimaryLedColors = primaryLedColors
 
 	buzzerVariable := BuzzerVariable{
 		Activated:      &defaultUint8,
@@ -66,7 +74,9 @@ func (vehicle *Vehicle) InitVehicleState(user *User, db *gorm.DB) (VehicleState,
 
 	vehicleState.HeadAngle = &headAngle
 
-	db.Save(&vehicleState)
+	if err := db.Save(&vehicleState).Error; err != nil {
+		return VehicleState{}, err
+	}
 
 	return vehicleState, nil
 }

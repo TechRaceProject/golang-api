@@ -20,13 +20,13 @@ type HeadAngleValidator struct {
 }
 
 type UpdateVehicleStateValidator struct {
-	Face            *uint8                    `json:"face" validate:"required,gte=0"`
-	LedAnimation    *uint8                    `json:"led_animation" validate:"required,gte=0,lte=5"`
-	BuzzerAlarm     *uint8                    `json:"buzzer_alarm" validate:"required,oneof=0 1"`
-	VideoActivated  *uint8                    `json:"video_activated" validate:"required,oneof=0 1"`
-	PrimaryLedColor *PrimaryLedColorValidator `json:"PrimaryLedColor" validate:"required"`
-	BuzzerVariable  *BuzzerVariableValidator  `json:"BuzzerVariable" validate:"required"`
-	HeadAngle       *HeadAngleValidator       `json:"HeadAngle" validate:"required"`
+	Face             *uint8                      `json:"face" validate:"required,gte=0"`
+	LedAnimation     *uint8                      `json:"led_animation" validate:"required,gte=0,lte=5"`
+	BuzzerAlarm      *uint8                      `json:"buzzer_alarm" validate:"required,oneof=0 1"`
+	VideoActivated   *uint8                      `json:"video_activated" validate:"required,oneof=0 1"`
+	PrimaryLedColors *[]PrimaryLedColorValidator `json:"PrimaryLedColors" validate:"required,min=12,max=12,dive"`
+	BuzzerVariable   *BuzzerVariableValidator    `json:"BuzzerVariable" validate:"required"`
+	HeadAngle        *HeadAngleValidator         `json:"HeadAngle" validate:"required"`
 }
 
 func (u *UpdateVehicleStateValidator) Validate() error {
