@@ -4,7 +4,7 @@ import "encoding/json"
 
 type VehicleState struct {
 	ID        uint `gorm:"primaryKey" json:"id"`
-	VehicleID uint `json:"-"`
+	VehicleID uint `json:"vehicle_id"`
 	//Vehicle             Vehicle            `gorm:"foreignKey:VehicleID"`
 	Face                *uint8             `gorm:"not null" json:"face"`
 	LedAnimation        *uint8             `gorm:"not null" json:"led_animation"`
