@@ -42,20 +42,6 @@ func (vehicle *Vehicle) InitVehicleState(user *User, db *gorm.DB) (VehicleState,
 
 	vehicleState.PrimaryLedColor = &primaryLedColor
 
-	secondaryLedColor := SecondaryLedColor{
-		BinaryRepresentation: new(int),
-		Red:                  &defaultUint8,
-		Green:                &defaultUint8,
-		Blue:                 &defaultUint8,
-		VehicleStateID:       vehicleState.ID,
-	}
-
-	if err := db.Create(&secondaryLedColor).Error; err != nil {
-		return VehicleState{}, err
-	}
-
-	vehicleState.SecondaryLedColor = &secondaryLedColor
-
 	buzzerVariable := BuzzerVariable{
 		Activated:      &defaultUint8,
 		Frequency:      &defaultUint16,

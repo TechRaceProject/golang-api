@@ -56,15 +56,6 @@ func UpdateVehicleStateHandler(c *gin.Context) {
 			Blue:          UpdateVehicleStateValidator.PrimaryLedColor.Blue,
 		})
 
-	connection.Model(models.SecondaryLedColor{}).
-		Where("id = ?", vehicleState.SecondaryLedColorID).
-		Updates(models.SecondaryLedColor{
-			BinaryRepresentation: UpdateVehicleStateValidator.SecondaryLedColor.BinaryRepresentation,
-			Red:                  UpdateVehicleStateValidator.SecondaryLedColor.Red,
-			Green:                UpdateVehicleStateValidator.SecondaryLedColor.Green,
-			Blue:                 UpdateVehicleStateValidator.SecondaryLedColor.Blue,
-		})
-
 	connection.Model(models.BuzzerVariable{}).
 		Where("id = ?", vehicleState.BuzzerVariableID).
 		Updates(models.BuzzerVariable{
