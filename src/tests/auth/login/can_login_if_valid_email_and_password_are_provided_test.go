@@ -17,7 +17,20 @@ func Test_can_login_if_valid_email_and_password_are_provided(t *testing.T) {
 
 	databaseConnection := tests.GetTestDBConnection()
 
-	databaseConnection.AutoMigrate(&models.User{})
+	err := databaseConnection.AutoMigrate(
+		&models.User{},
+		&models.Vehicle{},
+		&models.Race{},
+		&models.VehicleState{},
+		&models.PrimaryLedColor{},
+		&models.BuzzerVariable{},
+		&models.HeadAngle{},
+		&models.VehicleBattery{},
+	)
+
+	if err != nil {
+		t.Error("An error occurred while migrating the database: ", err)
+	}
 
 	hashedPassword, _ := services.HashPassword("password")
 
