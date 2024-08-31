@@ -16,8 +16,20 @@ func Test_can_signup_if_email_and_password_are_provided_test(t *testing.T) {
 
 	databaseConnection := tests.GetTestDBConnection()
 
-	// Créer une requête de test et la table associée
-	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.VehicleState{})
+	err := databaseConnection.AutoMigrate(
+		&models.User{},
+		&models.Vehicle{},
+		&models.Race{},
+		&models.VehicleState{},
+		&models.PrimaryLedColor{},
+		&models.BuzzerVariable{},
+		&models.HeadAngle{},
+		&models.VehicleBattery{},
+	)
+
+	if err != nil {
+		t.Error("An error occurred while migrating the database: ", err)
+	}
 
 	databaseConnection.Create(&models.Vehicle{
 		Name: "a vehicule is required to enable any user to signup",
