@@ -1,8 +1,10 @@
 package tests
 
 import (
+	"api/src/config"
 	"api/src/routes/protected"
 	"api/src/routes/public"
+	"log"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -23,7 +25,12 @@ func setupTestRouter(router *gin.Engine) *gin.Engine {
 
 	apiGroup := router.Group("/api")
 
-	public.SetupPublicRoutes(apiGroup)
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
+	public.SetupPublicRoutes(apiGroup, cfg)
 
 	protected.SetupProtectedRoutes(apiGroup)
 

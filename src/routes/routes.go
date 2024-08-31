@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"api/src/config"
 	"api/src/routes/protected"
 	"api/src/routes/public"
 	"os"
@@ -28,12 +29,12 @@ func SetupCors(router *gin.Engine) *gin.Engine {
 	return router
 }
 
-func SetupRouter(router *gin.Engine) *gin.Engine {
+func SetupRouter(router *gin.Engine, cfg *config.Config) *gin.Engine {
 	router = SetupCors(router)
 
 	apiGroup := router.Group("/api")
 
-	public.SetupPublicRoutes(apiGroup)
+	public.SetupPublicRoutes(apiGroup, cfg)
 
 	protected.SetupProtectedRoutes(apiGroup)
 

@@ -4,6 +4,7 @@ import (
 	"api/src/models"
 	"api/src/tests"
 	"encoding/json"
+	"log"
 	"net/http"
 	"testing"
 
@@ -14,37 +15,58 @@ import (
 func Test_can_signup_if_email_and_password_are_provided_test(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
+	// Initialisez la connexion à la base de données de test
 	databaseConnection := tests.GetTestDBConnection()
 
-	// Créer une requête de test et la table associée
-	databaseConnection.AutoMigrate(&models.User{}, &models.Vehicle{}, &models.VehicleState{})
+	// Effectuez les migrations pour toutes les tables nécessaires
+	err := databaseConnection.AutoMigrate(
+		&models.User{},
+		&models.Vehicle{},
+		&models.VehicleState{},
+		&models.PrimaryLedColor{},
+		&models.SecondaryLedColor{},
+		&models.BuzzerVariable{},
+		&models.HeadAngle{},
+		&models.VehicleBattery{},
+	)
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
 
+	// Préparez les données nécessaires pour le test
 	databaseConnection.Create(&models.Vehicle{
-		Name: "a vehicule is required to enable any user to signup",
+		Name: "A vehicle is required to enable any user to signup",
 	})
 
+	// Données utilisateur pour le test
 	user := map[string]string{
 		"email":    "test@example.com",
 		"password": "password",
 	}
 	body, _ := json.Marshal(user)
 
-	// On effecture une requête unauthenticated
+	// Effectuez une requête POST non authentifiée pour le signup
 	requestRecorder, _ := tests.PerformUnAuthenticatedRequest(http.MethodPost, "/api/signup", body)
 
-	// Vérifier le statut de la réponse
-	assert.Equal(t, http.StatusCreated, requestRecorder.Code)
+	// Vérifiez le statut de la réponse
+	assert.Equal(t, http.StatusCreated, requestRecorder.Code, "Expected status code 201, got %d", requestRecorder.Code)
 
-	// Vérifier le contenu de la réponse
-	var response map[string]string
-	json.Unmarshal(requestRecorder.Body.Bytes(), &response)
-	assert.Equal(t, "User created", response["message"])
+	// Vérifiez le contenu de la réponse
+	var response map[string]interface{}
+	err = json.Unmarshal(requestRecorder.Body.Bytes(), &response)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal response body: %v", err)
+	}
+	assert.Equal(t, "User created", response["message"], "Expected message 'User created', got '%s'", response["message"])
 
-	// Vérifier que l'utilisateur a été créé dans la base de données
+	// Vérifiez que l'utilisateur a été créé dans la base de données
 	var createdUser models.User
-	databaseConnection.Where("email = ?", user["email"]).First(&createdUser)
-	assert.Equal(t, user["email"], createdUser.Email)
+	result := databaseConnection.Where("email = ?", user["email"]).First(&createdUser)
+	if result.Error != nil {
+		t.Fatalf("Expected user with email %s to be created, but got error: %v", user["email"], result.Error)
+	}
+	assert.Equal(t, user["email"], createdUser.Email, "Expected email to be '%s', got '%s'", user["email"], createdUser.Email)
 
-	// On retire l'utilisateur de la base de données
+	// Nettoyez la base de données en supprimant l'utilisateur créé
 	databaseConnection.Unscoped().Delete(&createdUser)
 }

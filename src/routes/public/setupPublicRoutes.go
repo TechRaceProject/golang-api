@@ -1,15 +1,16 @@
 package public
 
 import (
+	"api/src/config"
 	"api/src/controllers"
+	"api/src/middleware"
 	"api/src/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupPublicRoutes(routerGroup *gin.RouterGroup) {
-	routerGroup.POST("/signup", controllers.Signup)
-
+func SetupPublicRoutes(routerGroup *gin.RouterGroup, cfg *config.Config) {
+	routerGroup.POST("/signup", controllers.Signup, middleware.SendWelcomeEmailMiddleware(cfg))
 	routerGroup.POST("/login", controllers.Login)
 
 	routerGroup.GET("/hello", func(c *gin.Context) {
@@ -18,6 +19,5 @@ func SetupPublicRoutes(routerGroup *gin.RouterGroup) {
 		})
 	})
 
-	//todo: passer cette route en authenticated
 	routerGroup.GET("/sse", services.SSEHandler)
 }
