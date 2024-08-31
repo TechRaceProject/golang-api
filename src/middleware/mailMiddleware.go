@@ -1,4 +1,3 @@
-// middleware/send_email.go
 package middleware
 
 import (
