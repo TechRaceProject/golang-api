@@ -23,7 +23,7 @@ func Test_can_signup_if_email_and_password_are_provided_test(t *testing.T) {
 		&models.User{},
 		&models.Vehicle{},
 		&models.VehicleState{},
-		&models.PrimaryLedColor{}, // Ajoutez toutes les tables nécessaires ici
+		&models.PrimaryLedColor{},
 		&models.SecondaryLedColor{},
 		&models.BuzzerVariable{},
 		&models.HeadAngle{},
