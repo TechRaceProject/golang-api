@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api/src/config"
 	"api/src/models"
 	"api/src/models/attributes"
 	"api/src/routes"
@@ -210,13 +211,20 @@ func initMQTT() {
 }
 
 func startWebServer() {
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	router = routes.SetupRouter(router)
+	router = routes.SetupRouter(router, cfg)
 
-	router.Run(":8000")
+	if err := router.Run(":8000"); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 
 	fmt.Println("Server started on port 8000.")
 }

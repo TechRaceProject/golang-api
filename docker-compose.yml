@@ -1,11 +1,23 @@
-services: 
+version: '3.9'
+
+services:
   api:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile_dev
     container_name: go
     environment:
-      Port: 8000
+      - PORT=8000
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - EMAIL_FROM=${SMTP_USER}
+      - TEMPLATE_PATH=/app/src/templates
     ports:
       - "8000:8000"
     volumes:
@@ -16,29 +28,36 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   mosquitto:
     image: eclipse-mosquitto
+    container_name: mosquitto
     ports:
-        - "1883:1883"
-        - "9001:9001"
+      - "1883:1883"
+      - "9001:9001"
     volumes:
-        - ./mosquitto.conf:/mosquitto/config/mosquitto.conf    
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
     restart: always
     networks:
       - goland-network
 
   mysql:
     container_name: mysql
+    image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: database
     healthcheck:
-      test: ["CMD", "mysql", "-uroot", "-proot", "-e", "SELECT 1"]
+      test: [ "CMD", "mysql", "-uroot", "-proot", "-e", "SELECT 1" ]
       interval: 5s
       timeout: 2s
       retries: 3
-    image: mysql:latest
     ports:
       - "3306:3306"
     restart: always
@@ -49,17 +68,27 @@ services:
 
   adminer:
     container_name: adminer
+    image: adminer
     depends_on:
       - mysql
-    image: adminer
     ports:
-      - 8080:8080
+      - "8080:8080"
     restart: always
     networks:
       - goland-network
 
+  email_service:
+    image: bytemark/smtp
+    container_name: smtp
+    environment:
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+    ports:
+      - "1025:25"
+    restart: always
+    networks:
+      - goland-network
 
 networks:
   goland-network:
     driver: bridge
-    

@@ -50,13 +50,11 @@ func Signup(c *gin.Context) {
 
 	if (creds.Email == "") || (creds.Password == "") {
 		services.SetUnprocessableEntity(c, "Email address and password are required")
-
 		return
 	}
 
 	if !services.EmailValidator(creds.Email) {
 		services.SetUnprocessableEntity(c, "User email address is invalid")
-
 		return
 	}
 
@@ -64,21 +62,17 @@ func Signup(c *gin.Context) {
 
 	if connection.Where("email = ?", creds.Email).First(&models.User{}).RowsAffected > 0 {
 		services.SetUnprocessableEntity(c, "A user with this email address already exists")
-
 		return
 	}
 
 	if creds.Username != nil && connection.Where("username = ?", *creds.Username).First(&models.User{}).RowsAffected > 0 {
 		services.SetUnprocessableEntity(c, "A user with this username already exists")
-
 		return
 	}
 
 	hashedPassword, err := services.HashPassword(creds.Password)
-
 	if err != nil {
 		services.SetInternalServerError(c, "Internal server error while hashing password")
-
 		return
 	}
 
@@ -86,7 +80,6 @@ func Signup(c *gin.Context) {
 	var errorOccuredInTransaction error
 
 	connection.Transaction(func(transaction *gorm.DB) error {
-
 		user = models.User{
 			Username: creds.Username,
 			Email:    creds.Email,
@@ -94,34 +87,27 @@ func Signup(c *gin.Context) {
 		}
 
 		result := transaction.Create(&user)
-
 		if result.Error != nil {
 			errorOccuredInTransaction = result.Error
-
 			return errorOccuredInTransaction
 		}
 
 		vehicles := []models.Vehicle{}
-
 		transaction.Find(&vehicles)
 
 		if len(vehicles) == 0 {
-
 			errorOccuredInTransaction = errors.New(
 				"cannot register a user because no vehicles are available in the database",
 			)
-
 			return errorOccuredInTransaction
 		}
 
 		for _, vehicle := range vehicles {
 			_, createVehiculeStateError := vehicle.InitVehicleState(&user, transaction)
-
 			if createVehiculeStateError != nil {
 				errorOccuredInTransaction = errors.New(
 					createVehiculeStateError.Error(),
 				)
-
 				return createVehiculeStateError
 			}
 		}
@@ -130,8 +116,12 @@ func Signup(c *gin.Context) {
 
 	if errorOccuredInTransaction != nil {
 		services.SetInternalServerError(c, errorOccuredInTransaction.Error())
-
 		return
+	}
+
+	c.Set("user_email", user.Email)
+	if user.Username != nil {
+		c.Set("username", *user.Username)
 	}
 
 	services.SetCreated(c, "User created", user)
@@ -145,20 +135,19 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	rememberMe := c.DefaultPostForm("remember_me", "false") == "true"
+
 	if (creds.Email == "") || (creds.Password == "") {
 		services.SetUnprocessableEntity(c, "Email address and password are required")
-
 		return
 	}
 
 	if !services.EmailValidator(creds.Email) {
 		services.SetUnprocessableEntity(c, "User email address is invalid")
-
 		return
 	}
 
 	var user models.User
-
 	query := services.GetConnection().Where("email = ?", creds.Email).Find(&user)
 
 	if query.Error != nil {
@@ -166,7 +155,6 @@ func Login(c *gin.Context) {
 			services.SetNotFound(c, "Invalid credentials")
 			return
 		}
-
 		services.SetInternalServerError(c, "Internal server error")
 		return
 	}
@@ -177,6 +165,9 @@ func Login(c *gin.Context) {
 	}
 
 	expirationTime := time.Now().Add(3 * time.Hour)
+	if rememberMe {
+		expirationTime = time.Now().Add(24 * time.Hour)
+	}
 
 	claims := &Claims{
 		Email: creds.Email,
@@ -188,7 +179,6 @@ func Login(c *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString(jwtKey)
-
 	if err != nil {
 		services.SetInternalServerError(c, "Internal server error")
 		return
