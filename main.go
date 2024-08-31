@@ -67,7 +67,6 @@ func performMigrations(database *gorm.DB) {
 		&models.Race{},
 		&models.VehicleState{},
 		&models.PrimaryLedColor{},
-		&models.SecondaryLedColor{},
 		&models.BuzzerVariable{},
 		&models.HeadAngle{},
 		&models.VehicleBattery{},
