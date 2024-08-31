@@ -39,41 +39,70 @@ func UpdateVehicleStateHandler(c *gin.Context) {
 		return
 	}
 
-	connection.Model(models.VehicleState{}).
-		Where("id = ?", vehiculeStateId).
-		Updates(models.VehicleState{
-			Face:           UpdateVehicleStateValidator.Face,
-			LedAnimation:   UpdateVehicleStateValidator.LedAnimation,
-			BuzzerAlarm:    UpdateVehicleStateValidator.BuzzerAlarm,
-			VideoActivated: UpdateVehicleStateValidator.VideoActivated,
-		})
+	var errorOccuredInTransaction error
 
-	for _, primaryLedColor := range *UpdateVehicleStateValidator.PrimaryLedColors {
-		model := models.PrimaryLedColor{
-			LedIdentifier: primaryLedColor.LedIdentifier,
-			Red:           primaryLedColor.Red,
-			Green:         primaryLedColor.Green,
-			Blue:          primaryLedColor.Blue,
+	connection.Transaction(func(transaction *gorm.DB) error {
+
+		errorOccuredInTransaction = transaction.Model(models.VehicleState{}).
+			Where("id = ?", vehiculeStateId).
+			Updates(models.VehicleState{
+				Face:           UpdateVehicleStateValidator.Face,
+				LedAnimation:   UpdateVehicleStateValidator.LedAnimation,
+				BuzzerAlarm:    UpdateVehicleStateValidator.BuzzerAlarm,
+				VideoActivated: UpdateVehicleStateValidator.VideoActivated,
+			}).Error
+
+		if errorOccuredInTransaction != nil {
+			return errorOccuredInTransaction
 		}
 
-		updatePrimaryLedColorRelationship(connection, model, vehicleState.ID)
+		for _, primaryLedColor := range *UpdateVehicleStateValidator.PrimaryLedColors {
+			model := models.PrimaryLedColor{
+				LedIdentifier: primaryLedColor.LedIdentifier,
+				Red:           primaryLedColor.Red,
+				Green:         primaryLedColor.Green,
+				Blue:          primaryLedColor.Blue,
+			}
+
+			errorOccuredInTransaction = updatePrimaryLedColorRelationship(transaction, model, vehicleState.ID)
+
+			if errorOccuredInTransaction != nil {
+				return errorOccuredInTransaction
+			}
+		}
+
+		buzzerVariable := models.BuzzerVariable{
+			ID:        *vehicleState.BuzzerVariableID,
+			Activated: UpdateVehicleStateValidator.BuzzerVariable.Activated,
+			Frequency: UpdateVehicleStateValidator.BuzzerVariable.Frequency,
+		}
+
+		errorOccuredInTransaction = updateBuzzerVariableRelationship(transaction, buzzerVariable)
+
+		if errorOccuredInTransaction != nil {
+			return errorOccuredInTransaction
+		}
+
+		headAngle := models.HeadAngle{
+			ID:              *vehicleState.HeadAngleID,
+			VerticalAngle:   UpdateVehicleStateValidator.HeadAngle.VerticalAngle,
+			HorizontalAngle: UpdateVehicleStateValidator.HeadAngle.HorizontalAngle,
+		}
+
+		errorOccuredInTransaction = updateHeadAngleRelationship(transaction, headAngle)
+
+		if errorOccuredInTransaction != nil {
+			return errorOccuredInTransaction
+		}
+
+		return nil
+	})
+
+	if errorOccuredInTransaction != nil {
+		services.SetInternalServerError(c, errorOccuredInTransaction.Error())
+
+		return
 	}
-
-	buzzerVariable := models.BuzzerVariable{
-		ID:        *vehicleState.BuzzerVariableID,
-		Activated: UpdateVehicleStateValidator.BuzzerVariable.Activated,
-		Frequency: UpdateVehicleStateValidator.BuzzerVariable.Frequency,
-	}
-
-	updateBuzzerVariableRelationship(connection, buzzerVariable)
-
-	headAngle := models.HeadAngle{
-		ID:              *vehicleState.HeadAngleID,
-		VerticalAngle:   UpdateVehicleStateValidator.HeadAngle.VerticalAngle,
-		HorizontalAngle: UpdateVehicleStateValidator.HeadAngle.HorizontalAngle,
-	}
-
-	updateHeadAngleRelationship(connection, headAngle)
 
 	connection.Where("id = ?", vehiculeStateId).Preload(clause.Associations).First(&vehicleState)
 
