@@ -24,6 +24,12 @@ func (h MQTTHandler) HandleMQTTRaceData(id string, column string, payload string
 	var valueToUpdate interface{}
 	payload = strings.TrimSpace(payload)
 
+	if column == "message" {
+		vehicleId := race.VehicleID
+		h.HandleCreateVehiculeHistory(vehicleId, payload)
+		return
+	}
+
 	switch column {
 	case "distance_covered", "out_of_parcours", "collision_duration":
 		// we are always expecting a float from the ESP32 because of the way we are sending the data
@@ -79,4 +85,27 @@ func (h MQTTHandler) HandleMQTTRaceData(id string, column string, payload string
 	}
 
 	connection.Model(&race).Update(columnToUpdate, valueToUpdate)
+}
+
+func (h MQTTHandler) HandleCreateVehiculeHistory(vehicule_id uint, payload string) {
+	connection := GetConnection()
+
+	var vehicle models.Vehicle
+
+	if connection.Where("id = ?", vehicule_id).First(&vehicle).RowsAffected == 0 {
+		fmt.Printf("Vehicle with id %d not found\n", vehicule_id)
+
+		return
+	}
+
+	VehicleHistory := models.VehicleHistory{
+		VehicleID: vehicle.ID,
+		Message:   payload,
+	}
+
+	err := connection.Create(&VehicleHistory)
+
+	if err.Error != nil {
+		fmt.Printf("Error while creating vehicle history: %v\n", err.Error)
+	}
 }

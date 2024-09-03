@@ -136,6 +136,29 @@ func seedDatabase(database *gorm.DB) {
 	database.Where("username IN ?", usernames).Find(&users)
 	database.Find(&vehicles)
 
+	for _, vehicle := range vehicles {
+		var messages = []string{
+			"Début de la course",
+			"Changement d'angle de la tête",
+			"Changement animation des leds",
+			"Activation/Desactivation de la caméra",
+			"Fin de la course",
+		}
+		for i := 0; i < 5; i++ {
+			var VehicleHistory models.VehicleHistory
+			err := database.FirstOrCreate(&VehicleHistory, &models.VehicleHistory{
+				VehicleID: vehicle.ID,
+				Message:   messages[i],
+			})
+
+			fmt.Println("Vehicle history created: ", VehicleHistory)
+
+			if err.Error != nil {
+				fmt.Println("Error while creating vehicle history: ", err.Error)
+			}
+		}
+	}
+
 	for _, user := range users {
 		var userAlreadyHaveVehicleStateForThisVehicle bool
 
