@@ -28,14 +28,6 @@ func messagePubHandler(client mqtt.Client, msg mqtt.Message) {
 	id := messageParts[2]
 	column := messageParts[3]
 
-	// fmt.Println("############### MESSAGE RECEIVED ###############")
-	// fmt.Println(msg.Topic())
-	// fmt.Println(payload)
-	// fmt.Println("models: ", model)
-	// fmt.Println("id: ", id)
-	// fmt.Println("column: ", column)
-	// fmt.Println("############# END #################")
-
 	switch model {
 	case "races":
 		mqttHandler.HandleMQTTRaceData(id, column, payload)

@@ -3,7 +3,7 @@ package models
 import "gorm.io/gorm"
 
 type Vehicle struct {
-	ID          uint   `gorm:"primaryKey"`
+	ID          uint   `gorm:"primaryKey" json:"id"`
 	Name        string `json:"name"`
 	IpAdress    string `json:"ip_adress"`
 	IsAvailable bool   `json:"is_available"`
