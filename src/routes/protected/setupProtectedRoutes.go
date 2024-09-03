@@ -4,6 +4,7 @@ import (
 	controllers "api/src/controllers"
 	race_controller "api/src/controllers/race"
 	"api/src/controllers/vehicle"
+	"api/src/controllers/vehicle_history"
 	"api/src/controllers/vehicle_state"
 
 	"api/src/middleware"
@@ -38,6 +39,12 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 	{
 		vehicleGroup.GET("/", vehicle.IndexVehicleHandler)
 		vehicleGroup.GET("/:id", vehicle.GetVehicleHandler)
+	}
+
+	// VEHICLE HISTORY
+	vehicleHistoryGroup := routerGroup.Group("/vehicle-histories")
+	{
+		vehicleHistoryGroup.GET("/", vehicle_history.GetAllVehicleHistoriesHandler)
 	}
 
 	// VEHICLE STATE ROUTES
