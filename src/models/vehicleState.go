@@ -12,9 +12,9 @@ type VehicleState struct {
 	VideoActivated   *uint8            `gorm:"not null" json:"video_activated"`
 	PrimaryLedColors []PrimaryLedColor `gorm:"foreignKey:VehicleStateID" json:"primary_led_colors"`
 	BuzzerVariableID *uint             `json:"-"`
-	BuzzerVariable   *BuzzerVariable   `gorm:"foreignKey:BuzzerVariableID"`
+	BuzzerVariable   *BuzzerVariable   `gorm:"foreignKey:BuzzerVariableID" json:"buzzer_variable"`
 	HeadAngleID      *uint             `json:"-"`
-	HeadAngle        *HeadAngle        `gorm:"foreignKey:HeadAngleID"`
+	HeadAngle        *HeadAngle        `gorm:"foreignKey:HeadAngleID" json:"head_angle"`
 	UserID           uint              `json:"-"`
 	Model
 }

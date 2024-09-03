@@ -163,7 +163,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"start_time\": \"2024-08-25 19:07:00\",\n    \"type\": \"manual\",\n    \"name\": \"ma course\",\n    \"status\": \"not_started\",\n    \"average_speed\": 0.13,\n    \"vehicle_id\": 1\n}",
+							"raw": "{\n    \"start_time\": \"2024-08-25 19:07:00\",\n    \"type\": \"manual\",\n    \"name\": \"ma course\",\n    \"status\": \"not_started\",\n    \"vehicle_id\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -301,7 +301,44 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "1"
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user vehicle state",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/users/:userId/vehicle-states",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								":userId",
+								"vehicle-states"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
 								}
 							]
 						}
@@ -325,7 +362,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"face\": 0,\n    \"led_animation\": 0,\n    \"buzzer_alarm\": 0,\n    \"video_activated\": 0,\n    \"PrimaryLedColor\": {\n        \"led_identifier\": 0,\n        \"red\": 0,\n        \"green\": 0,\n        \"blue\": 0\n    },\n    \"SecondaryLedColor\": {\n        \"binary_representation\": 0,\n        \"red\": 0,\n        \"green\": 0,\n        \"blue\": 0\n    },\n    \"BuzzerVariable\": {\n        \"activated\": 0,\n        \"frequency\": 0\n    },\n    \"HeadAngle\": {\n        \"vertical_angle\": 0,\n        \"horizontal_angle\": 0\n    }\n}",
+							"raw": "{\n        \"face\": 0,\n        \"led_animation\": 0,\n        \"buzzer_alarm\": 0,\n        \"video_activated\": 0,\n        \"primary_led_colors\": [\n            {\n                \"led_identifier\": 4097,\n                \"red\": 10,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 4098,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 4100,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 8,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 16,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 32,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 64,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 128,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 256,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 512,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 1024,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            },\n            {\n                \"led_identifier\": 2048,\n                \"red\": 0,\n                \"green\": 0,\n                \"blue\": 0\n            }\n        ],\n        \"buzzer_variable\": {\n            \"activated\": 0,\n            \"frequency\": 0\n        },\n        \"head_angle\": {\n            \"vertical_angle\": 180,\n            \"horizontal_angle\": 0\n        }\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -354,25 +391,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "Hello World",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8000/api/hello",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"hello"
-					]
-				}
-			},
-			"response": []
 		},
 		{
 			"name": "Protected",
