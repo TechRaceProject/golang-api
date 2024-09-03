@@ -1,6 +1,8 @@
 package services
 
 import (
+	"api/src/models"
+	"fmt"
 	"log"
 	"os"
 
@@ -65,4 +67,24 @@ func GetConnection() *gorm.DB {
 
 func SetConnection(db *gorm.DB) {
 	database = db
+}
+
+func AutoMigrateModels(db *gorm.DB) {
+	err := database.AutoMigrate(
+		&models.User{},
+		&models.Vehicle{},
+		&models.Race{},
+		&models.VehicleState{},
+		&models.PrimaryLedColor{},
+		&models.BuzzerVariable{},
+		&models.HeadAngle{},
+		&models.VehicleBattery{},
+		&models.VehicleHistory{},
+	)
+
+	if err != nil {
+		log.Fatal("Error performing database migrations: ", err)
+	}
+
+	fmt.Println("Database migrations completed.")
 }
