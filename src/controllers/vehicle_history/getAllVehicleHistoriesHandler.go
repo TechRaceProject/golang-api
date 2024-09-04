@@ -12,7 +12,9 @@ func GetAllVehicleHistoriesHandler(c *gin.Context) {
 
 	var vehicleHistories []models.VehicleHistory
 
-	connection.Preload("Vehicle").Find(&vehicleHistories)
+	connection.Preload("Vehicle").
+		Where("created_at >= DATE(NOW())").
+		Find(&vehicleHistories)
 
 	services.SetOK(c, "Vehicules histories successfully retrieved", vehicleHistories)
 }
