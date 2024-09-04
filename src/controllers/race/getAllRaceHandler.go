@@ -5,6 +5,7 @@ import (
 	"api/src/services"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 )
 
 func GetAllRaceHandler(c *gin.Context) {
@@ -12,7 +13,7 @@ func GetAllRaceHandler(c *gin.Context) {
 
 	var races []models.Race
 
-	if err := db.Preload("Vehicle").Find(&races).Error; err != nil {
+	if err := db.Preload(clause.Associations).Find(&races).Error; err != nil {
 		services.SetInternalServerError(c, "Failed to retrieve races")
 		return
 	}

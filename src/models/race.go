@@ -18,6 +18,6 @@ type Race struct {
 	Status            string                 `gorm:"not null" json:"status"`
 	Type              string                 `gorm:"not null" json:"type"`
 	UserID            uint                   `json:"user_id"`
-	User              User                   `gorm:"foreignKey:UserID" json:"-"`
+	User              User                   `gorm:"foreignKey:UserID" json:"user"`
 	Model
 }

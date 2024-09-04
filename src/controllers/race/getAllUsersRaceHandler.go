@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 )
 
 func GetAllUsersRaceHandler(c *gin.Context) {
@@ -22,7 +23,7 @@ func GetAllUsersRaceHandler(c *gin.Context) {
 		return
 	}
 
-	db.Where("user_id = ?", uint(userId)).Preload("Vehicle").Find(&races)
+	db.Where("user_id = ?", uint(userId)).Preload(clause.Associations).Find(&races)
 
 	services.SetOK(c, "User races retrieved successfully", races)
 }
