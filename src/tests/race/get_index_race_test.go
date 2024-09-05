@@ -41,7 +41,7 @@ func Test_get_races_index(t *testing.T) {
 	databaseConnection.Create(&vehicle)
 
 	// Create a mock race associated with the user
-	var startTime attributes.CustomTime
+	var startTime = &attributes.CustomTime{}
 	startTime.Time = time.Now()
 
 	race := models.Race{

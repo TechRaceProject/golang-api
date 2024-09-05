@@ -26,7 +26,7 @@ func Test_update_race_successfully(t *testing.T) {
 	}
 	databaseConnection.Create(&vehicle)
 
-	var startTime attributes.CustomTime
+	var startTime = &attributes.CustomTime{}
 	startTime.Time = time.Now()
 
 	race := models.Race{
