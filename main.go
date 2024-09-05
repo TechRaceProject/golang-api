@@ -181,7 +181,8 @@ func seedDatabase(database *gorm.DB) {
 		raceNames := []string{"Morning Sprint", "Afternoon Challenge", "Evening Marathon"}
 
 		for i := 0; i < 3; i++ {
-			var startTime attributes.CustomTime
+			startTime := &attributes.CustomTime{}
+
 			startTime.Time = time.Now().Add(time.Duration(i) * time.Hour)
 
 			endTime := &attributes.CustomTime{}

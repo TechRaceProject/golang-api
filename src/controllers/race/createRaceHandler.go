@@ -45,7 +45,7 @@ func CreateRaceHandler(c *gin.Context) {
 		return
 	}
 
-	startTime := createRaceValidator.StartTime
+	var startTime *attributes.CustomTime = createRaceValidator.StartTime
 	var endTime *attributes.CustomTime
 
 	if createRaceValidator.EndTime != nil {
