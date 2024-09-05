@@ -27,7 +27,7 @@ func Test_cannot_update_race_if_invalid_race_type_provided(t *testing.T) {
 	}
 	databaseConnection.Create(&vehicle)
 
-	var startTime attributes.CustomTime
+	var startTime = &attributes.CustomTime{}
 	startTime.Time = time.Now()
 
 	race := models.Race{
