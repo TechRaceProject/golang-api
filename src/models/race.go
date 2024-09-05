@@ -9,7 +9,7 @@ type Race struct {
 	Name              string                 `json:"name"`
 	VehicleID         uint                   `json:"vehicle_id"`
 	Vehicle           Vehicle                `gorm:"foreignKey:VehicleID" json:"vehicle"`
-	StartTime         attributes.CustomTime  `gorm:"type:datetime; not null" json:"start_time"`
+	StartTime         *attributes.CustomTime `gorm:"type:datetime" json:"start_time"`
 	EndTime           *attributes.CustomTime `gorm:"type:datetime" json:"end_time"`
 	CollisionDuration int                    `gorm:"not null" json:"collision_duration"`
 	DistanceCovered   int                    `gorm:"not null" json:"distance_covered"`
