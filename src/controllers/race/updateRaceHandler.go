@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"api/src/models"
+	"api/src/models/attributes"
 	"api/src/services"
 	validators "api/src/validators/race"
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,15 +42,10 @@ func UpdateRaceHandler(c *gin.Context) {
 		return
 	}
 
-	// Mise à jour uniquement du champ Start_time
-	if raceValidator.StartTime != nil && !raceValidator.StartTime.IsZero() {
-		if raceValidator.StartTime.After(existingRace.EndTime.Time) {
-			services.SetUnprocessableEntity(c, "StartTime cannot be after EndTime")
-
-			return
-		}
-
-		existingRace.StartTime = raceValidator.StartTime
+	// Mise à jour uniquement du champ Start_time quand la course est en cours
+	if raceValidator.Status == "in_progress" && existingRace.Status != "in_progress" {
+		now := attributes.CustomTime{Time: time.Now()}
+		existingRace.StartTime = &now
 	}
 
 	// Mise à jour uniquement du champ End_time
