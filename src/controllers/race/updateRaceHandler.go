@@ -40,6 +40,17 @@ func UpdateRaceHandler(c *gin.Context) {
 		return
 	}
 
+	// Mise à jour uniquement du champ Start_time
+	if raceValidator.StartTime != nil && !raceValidator.StartTime.IsZero() {
+		if raceValidator.StartTime.After(existingRace.EndTime.Time) {
+			services.SetUnprocessableEntity(c, "StartTime cannot be after EndTime")
+
+			return
+		}
+
+		existingRace.StartTime = raceValidator.StartTime
+	}
+
 	// Mise à jour uniquement du champ End_time
 	if raceValidator.EndTime != nil && !raceValidator.EndTime.IsZero() {
 		if raceValidator.EndTime.Before(existingRace.StartTime.Time) {
