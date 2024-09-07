@@ -13,6 +13,7 @@ import (
 func CreateRaceHandler(c *gin.Context) {
 	// Récupération de l'ID utilisateur depuis les paramètres de l'URL
 	userIdStr := c.Param("userId")
+
 	if userIdStr == "" || userIdStr == "0" || userIdStr == ":userId" {
 		services.SetUnprocessableEntity(c, "User not found")
 		return
@@ -61,7 +62,7 @@ func CreateRaceHandler(c *gin.Context) {
 		DistanceCovered:   0,
 		AverageSpeed:      0,
 		OutOfParcours:     0,
-		Status:            createRaceValidator.Status,
+		Status:            "not_started",
 		Type:              createRaceValidator.Type,
 		VehicleID:         createRaceValidator.VehicleID,
 		UserID:            uint(userId),
