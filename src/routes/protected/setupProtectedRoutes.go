@@ -39,6 +39,7 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 	{
 		vehicleGroup.GET("/", vehicle.IndexVehicleHandler)
 		vehicleGroup.GET("/:id", vehicle.GetVehicleHandler)
+		vehicleGroup.PATCH("/:id", vehicle.UpdateVehicleHandler)
 	}
 
 	// VEHICLE HISTORY
