@@ -39,10 +39,10 @@ func UpdateVehicleHandler(c *gin.Context) {
 		return
 	}
 
-	errorOccuredInTransaction := connection.Model(&vehicle).
+	errorDuringUpdate := connection.Model(&vehicle).
 		UpdateColumn("is_available", *UpdateVehicleValidator.IsAvailable).Error
 
-	if errorOccuredInTransaction != nil {
+	if errorDuringUpdate != nil {
 		services.SetInternalServerError(c, "Error during vehicle update")
 		return
 	}
