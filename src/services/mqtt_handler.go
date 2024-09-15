@@ -67,6 +67,12 @@ func (h MQTTHandler) HandleMQTTRaceData(id string, column string, payload string
 
 	if race.Status == "not_started" {
 		connection.Model(&race).Update("status", "in_progress")
+
+		if race.StartTime == nil {
+			connection.Model(&race).Update("start_time", &attributes.CustomTime{
+				Time: time.Now(),
+			})
+		}
 	}
 
 	if columnToUpdate == "status" {
