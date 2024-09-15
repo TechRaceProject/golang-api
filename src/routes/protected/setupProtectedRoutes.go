@@ -3,6 +3,7 @@ package protected
 import (
 	controllers "api/src/controllers"
 	race_controller "api/src/controllers/race"
+	user "api/src/controllers/user"
 	"api/src/controllers/vehicle"
 	"api/src/controllers/vehicle_history"
 	"api/src/controllers/vehicle_state"
@@ -23,6 +24,8 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 		userGroup.POST("/:userId/races", race_controller.CreateRaceHandler)
 		userGroup.GET("/:userId/races", race_controller.GetAllUsersRaceHandler)
 		userGroup.GET("/:userId/vehicle-states", vehicle_state.GetUserVehicleStatesHandler)
+		userGroup.PUT("/users/:id", user.UpdateUserHandler)
+		userGroup.DELETE("/users/:id", user.DeleteUserHandler)
 
 	}
 
@@ -40,12 +43,6 @@ func SetupProtectedRoutes(routerGroup *gin.RouterGroup) {
 		vehicleGroup.GET("/", vehicle.IndexVehicleHandler)
 		vehicleGroup.GET("/:id", vehicle.GetVehicleHandler)
 		vehicleGroup.PATCH("/:id", vehicle.UpdateVehicleHandler)
-	}
-
-	// VEHICLE HISTORY
-	vehicleHistoryGroup := routerGroup.Group("/vehicle-histories")
-	{
-		vehicleHistoryGroup.GET("/", vehicle_history.GetAllVehicleHistoriesHandler)
 	}
 
 	// VEHICLE HISTORY

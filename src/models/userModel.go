@@ -14,12 +14,7 @@ type User struct {
 
 func (u *User) Update(updateUser validators.UpdateUserValidator) {
 	u.Username = &updateUser.Username
-
 	u.Email = updateUser.Email
-
-	if updateUser.Password != "" {
-		u.Password = updateUser.Password
-	}
 }
 
 func (u *User) Create(CreateUser validators.RegisterUserValidator) {
